@@ -2211,9 +2211,14 @@
           const currentOperandCount = operandCountEl ? parseInt(operandCountEl.value || '2') : 2;
           // If power is the only checked operation and operandCount !== 1, disallow it
           if (checked.length === 1 && checked[0] === 'power' && currentOperandCount !== 1) {
-            const powerEl = document.getElementById('power');
-            if (powerEl) powerEl.checked = false;
-            alert('「累乗」は単独では選択できません。他の演算（加法・減法・乗法・除法）のいずれかを選択してください。\n(1項を選択した場合は累乗単独の出題が可能です)');
+            // If this input event was caused by switching the operandCount select
+            // (e.g. from 1 -> 2 or 3), suppress the alert so the UI transition
+            // won't annoy the user. Only show the alert for other user actions.
+            if (!(t && t.id === 'operandCount' && String(t.value) !== '1')) {
+              const powerEl = document.getElementById('power');
+              if (powerEl) powerEl.checked = false;
+              alert('「累乗」は単独では選択できません。他の演算（加法・減法・乗法・除法）のいずれかを選択してください。\n(1項を選択した場合は累乗単独の出題が可能です)');
+            }
           }
         } catch(err) {
           /* non-critical */
@@ -2544,6 +2549,84 @@
             </fieldset>
           </div>
   </div>
+        <script>
+          // 項数が「1」のときは加減乗除を選べないようにする
+          document.addEventListener('DOMContentLoaded', function () {
+            const operand = document.getElementById('operandCount');
+            const add = document.getElementById('add');
+            const sub = document.getElementById('subtract');
+            const mul = document.getElementById('multiply');
+            const divi = document.getElementById('divide');
+            const power = document.getElementById('power');
+            if (!operand) return;
+
+            function updateForOperandCount() {
+              const isSingle = String(operand.value) === '1';
+              const fractionChk = document.getElementById('fraction');
+              const fractionChecked = fractionChk && fractionChk.checked;
+
+              // 加減乗除を無効化/有効化
+              [add, sub, mul, divi].forEach(cb => {
+                if (!cb) return;
+                if (isSingle) {
+                  cb.checked = false;
+                  cb.disabled = true;
+                } else {
+                  // 分数チェックが有効な場合は分数側の制御に従う
+                  cb.disabled = !!(fractionChk && fractionChecked);
+                }
+              });
+
+              // 1項から2項/3項へ切り替わった場合は、加法を選択状態にする
+              // ただし分数チェックが有効で加法が無効化される場合は尊重する
+              if (!isSingle && add) {
+                if (!(fractionChk && fractionChecked)) add.checked = true;
+              }
+
+              // 1項時は累乗を自動的にチェック可能にする（ただし分数が強制している場合は尊重）
+              if (power) {
+                if (isSingle) {
+                  power.checked = true;
+                  power.disabled = false;
+                } else {
+                  // 切替時（非1項）には累乗のチェックを外す
+                  try { power.checked = false; } catch(e){}
+                  if (!(fractionChk && fractionChecked)) power.disabled = false;
+                }
+              }
+            }
+
+            operand.addEventListener('change', updateForOperandCount);
+            const fractionChk = document.getElementById('fraction');
+            if (fractionChk) fractionChk.addEventListener('change', updateForOperandCount);
+            // 初期状態反映
+            updateForOperandCount();
+
+            // 1項（累乗専用）選択時に累乗を外す操作を防止する
+            if (power) {
+              power.addEventListener('click', function (e) {
+                // クリックで外そうとしているかどうか（現在チェック済みでクリックで外れるなら）を判定
+                const isSingle = String(operand.value) === '1';
+                if (isSingle && power.checked) {
+                  // prevent uncheck: show alert and keep checked
+                  e.preventDefault();
+                  // some browsers toggle after click, so re-set asynchronously
+                  setTimeout(() => { power.checked = true; }, 0);
+                  alert('1項（累乗専用）が選択されているため、累乗は外せません。');
+                }
+              });
+              // キーボード操作などにも対応するため change イベントも監視
+              power.addEventListener('change', function (e) {
+                const isSingle = String(operand.value) === '1';
+                if (isSingle && !power.checked) {
+                  // restore
+                  power.checked = true;
+                  alert('1項（累乗専用）が選択されているため、累乗は外せません。');
+                }
+              });
+            }
+          });
+        </script>
         <!-- 分数の桁数選択エリア（分数時のみ表示） -->
         <div class="form-step" data-step="6">
           <div style="display:flex;justify-content:space-between;align-items:center;">
