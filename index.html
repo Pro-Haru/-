@@ -1,0 +1,2973 @@
+<!-- 計算問題プリント作成ツールのメインHTMLファイル -->
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <!-- メタ情報とスタイル定義 -->
+    <meta charset="UTF-8" />
+    <!-- 文字コード指定 -->
+    <title>計算問題プリント</title>
+    <!-- ページタイトル -->
+    <!-- 全体のレイアウト・デザインCSS -->
+    <style>
+      /* ページ全体の背景・フォント設定 */
+      body {
+        font-family: "UDDigiKyokashoN";
+        margin: 0;
+        background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+      }
+
+      /* メインコンテンツの枠デザイン */
+      #main-container {
+        max-width: 1400px;
+        margin: 40px auto 32px auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(60, 80, 120, 0.13),
+          0 1.5px 6px rgba(60, 80, 120, 0.07);
+        padding: 32px 28px 32px 28px;
+      }
+
+      /* タイトルのスタイル */
+      h1 {
+        margin-left: 0;
+        margin-top: 0;
+        font-size: 2.1em;
+        font-weight: 700;
+        color: #1976d2;
+        letter-spacing: 0.04em;
+        text-shadow: 0 2px 8px #e3eafc;
+        margin-bottom: 18px;
+      }
+
+      /* サブタイトルのスタイル */
+      h2 {
+        font-size: 1.3em;
+        color: #1976d2;
+        margin-top: 32px;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      /* フォーム全体の余白 */
+      form {
+        margin-bottom: 18px;
+      }
+
+      /* フィールドセット枠のデザイン */
+      fieldset {
+        border: 1.5px solid #b0b0b0;
+        border-radius: 10px;
+        padding: 14px 18px 12px 18px;
+        margin-bottom: 18px;
+        background: #fafdff;
+        box-shadow: 0 1.5px 6px rgba(60, 80, 120, 0.04);
+      }
+
+      /* フィールドセットのタイトル */
+      legend {
+        font-size: 1.08em;
+        font-weight: bold;
+        color: #1976d2;
+        padding: 0 8px;
+        letter-spacing: 0.03em;
+      }
+
+      /* ラベルの文字色・サイズ */
+      label {
+        font-size: 1em;
+        color: #333;
+      }
+
+      /* 数値入力・セレクトボックスのデザイン */
+      /* 入力（number）は控えめに整える */
+      input[type="number"] {
+        font-size: 1em;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1; /* slate-300 */
+        margin: 0 4px 0 2px;
+        background: #f8fafc; /* slate-50 */
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      }
+      input[type="number"]:hover {
+        background: #ffffff;
+        border-color: #b6c2d9;
+      }
+      input[type="number"]:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+        background: #ffffff;
+      }
+
+      /* 最新風セレクト（カスタム矢印＋角丸＋フォーカスリング） */
+      select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        font-size: 1em;
+        line-height: 1.2;
+        color: #0f172a; /* slate-900 */
+        padding: 8px 2.4em 8px 12px; /* 右は矢印分を確保 */
+        min-height: 36px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1; /* slate-300 */
+        margin: 0 6px 0 2px;
+        background:
+          linear-gradient(#ffffff, #f8fafc) padding-box,
+          linear-gradient(transparent, transparent) border-box;
+        /* 矢印（SVG） */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7l5 6 5-6' fill='none' stroke='%23343a40' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 18px 18px;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      }
+
+      /* selectがopenクラスのとき（リスト表示中）は矢印を上向きSVGに変更 */
+      select.open {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13l5-6 5 6' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+      /* IE用（旧） */
+      select::-ms-expand { display: none; }
+      /* ホバー/フォーカス */
+      select:hover {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7l5 6 5-6' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+      }
+
+      /* リスト表示中（.open）ではhoverでも向き・色を変えない */
+      select.open:hover {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13l5-6 5 6' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  border-color: #b6c2d9;
+  /* backgroundプロパティを削除し、矢印を維持 */
+      }
+      select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+  /* backgroundプロパティを削除し、矢印を維持 */
+      }
+      /* 無効状態 */
+      select:disabled {
+        color: #64748b; /* slate-500 */
+        background: #f1f5f9; /* slate-100 */
+        border-color: #e2e8f0; /* slate-200 */
+        cursor: not-allowed;
+        opacity: 1;
+      }
+
+      /* チェックボックス・ラジオボタンの色 */
+      input[type="checkbox"],
+      input[type="radio"] {
+        accent-color: #1976d2;
+      }
+
+      /* ボタンのデザイン */
+      button,
+      .printButton {
+        background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 22px;
+        font-size: 1.08em;
+        font-weight: 600;
+        margin: 8px 8px 0 0;
+        box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+
+      /* 無効化された印刷ボタンの見た目 */
+      .printButton[disabled] {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+        filter: grayscale(0.12);
+      }
+
+      /* ボタンのホバー時のデザイン */
+      button:hover,
+      .printButton:hover {
+        background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+      }
+
+      /* 問題・回答表示エリアの枠デザイン */
+      #printArea,
+      #answerArea {
+        border: 1.5px solid #b0b0b0;
+        border-radius: 10px;
+        background: #fafdff;
+        box-shadow: 0 1.5px 6px rgba(60, 80, 120, 0.04);
+        margin-bottom: 18px;
+        /* 追加: 印刷エリアの高さを広げる */
+        padding: 28px 10px 18px 10px;
+      }
+
+      /* 問題・回答の列レイアウト */
+      .column {
+        background: none;
+      }
+
+      /* ハンバーガーメニュー全体の配置 */
+      #menu {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 1000;
+      }
+
+      /* 最新風ハンバーガーメニュー（三本線） */
+      #menu-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+        border: 1.5px solid #b0b0b0;
+        cursor: pointer;
+        transition: box-shadow 0.2s, border 0.2s;
+        position: relative;
+      }
+      #menu-icon:hover {
+        box-shadow: 0 8px 24px rgba(25, 118, 210, 0.18);
+        border: 1.5px solid #1976d2;
+      }
+      #menu-icon span {
+        display: block;
+        height: 4.5px;
+        width: 28px;
+        background: #1976d2;
+        border-radius: 3px;
+        transition: 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        position: relative;
+      }
+      /* 開閉時のアニメーション */
+      #menu.open #menu-icon span:nth-child(1) {
+        transform: translateY(8.5px) rotate(45deg);
+      }
+      #menu.open #menu-icon span:nth-child(2) {
+        opacity: 0;
+      }
+      #menu.open #menu-icon span:nth-child(3) {
+        transform: translateY(-8.5px) rotate(-45deg);
+      }
+
+      /* メニュー項目の表示・非表示制御 */
+      #menu-items {
+        display: none;
+        background: #fff;
+        border: 1.5px solid #b0b0b0;
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(60, 80, 120, 0.13);
+        margin-top: 12px;
+        padding: 16px 28px;
+        min-width: 140px;
+      }
+
+      /* メニューが開いている時の表示 */
+      #menu.open #menu-items {
+        display: block;
+      }
+
+      /* メニュー内リンクのデザイン */
+      #menu-items a {
+        display: block;
+        color: #1976d2;
+        text-decoration: none;
+        margin: 12px 0;
+        font-size: 1.08em;
+        font-weight: 500;
+        border-radius: 5px;
+        padding: 4px 8px;
+        transition: background 0.2s, color 0.2s;
+      }
+
+      /* メニューリンクのホバー時 */
+      #menu-items a:hover {
+        background: #e3eafc;
+        color: #1565c0;
+      }
+
+      /* 画面幅が狭い時のレスポンシブ対応 */
+      @media (max-width: 700px) {
+        #main-container {
+          padding: 10px 2vw 18px 2vw;
+        }
+
+        h1 {
+          font-size: 1.3em;
+        }
+
+        #menu {
+          top: 8px;
+          left: 8px;
+        }
+      }
+
+    /* フォーム要素のフォント統一 */
+    /* フォーム要素のスタイルは後続のformセレクタで設定しています */
+
+      /* 問題数注記のフォント統一 */
+      #questionCountNote {
+        /* 問題数の注記のスタイル */
+        font-family: "UDKyoKasho", "UDdesignGothic", "Meiryo", "sans-serif";
+        /* フォントをUD教科書体に設定 */
+      }
+
+      /* select直後のテキストノード用に、親formのfont-familyも継承 */
+      /* 親formのフォント統一 */
+      form {
+        /* 親formのfont-familyを継承 */
+        font-family: "UDKyoKasho", "UDdesignGothic", "Meiryo", "sans-serif";
+        /* フォントをUD教科書体に設定 */
+      }
+
+      /* Added missing closing brace */
+
+      /* 問題・回答エリアの詳細レイアウト */
+      #printArea,
+      #answerArea {
+        /* 問題と回答の表示エリアのスタイル */
+        border: 2px solid black;
+        /* 枠線を追加 */
+        padding: 10px;
+        /* 内側の余白を追加 */
+        width: 97%;
+        /* 幅を97%に設定 */
+        margin: 0 auto;
+        /* 中央寄せに設定 */
+        background-color: #f9f9f9;
+        /* 背景色を薄いグレーに設定 */
+        display: flex;
+        /* フレックスボックスを使用 */
+        flex-wrap: wrap;
+        /* 子要素を折り返す設定 */
+      }
+
+      /* 各列の詳細レイアウト */
+      .column {
+        /* 各列のスタイル */
+        width: 19.4%;
+        /* 各列の幅を設定（5列で100%になるように） */
+        display: flex;
+        /* フレックスボックスを使用 */
+        flex-direction: column;
+        /* 縦方向に並べる設定 */
+        box-sizing: border-box;
+        /* パディングとボーダーを含めた幅・高さの計算を行う */
+      }
+
+      /* 問題・回答の個別デザイン */
+      .question,
+      .answer {
+        /* 問題と回答のスタイル */
+        font-size: 18px;
+        /* フォントサイズを18pxに設定 */
+        margin: 0;
+        /* マージンを0に設定 */
+        padding: 10px 0;
+        /* 上下のパディングを10pxに設定 */
+        display: flex;
+        /* フレックスボックスを使用 */
+        align-items: center;
+        /* 縦方向の中央揃えを設定 */
+        letter-spacing: 0em;
+        /* 文字間隔を0emに設定 */
+      }
+
+      /* 途中式（解き方）の表示 */
+      .solution {
+        font-size: 0.92em;
+        color: #333;
+        margin-top: 6px;
+        line-height: 1.4;
+      }
+
+      /* 問題番号・回答番号のデザイン */
+      .question-number,
+      .answer-number {
+        /* 問題番号と回答番号のスタイル */
+        width: 35px;
+        /* 固定幅に設定 */
+        margin-right: 0px;
+        /* 右側の余白を0pxに設定 */
+        text-align: left;
+        /* 左寄せに設定 */
+      }
+
+      /* 問題文・回答文のデザイン */
+      .question-text,
+      .answer-text {
+        /* 問題文と回答文のスタイル */
+        flex: 1;
+        /* 残りのスペースを占有する設定 */
+      }
+
+      /* 印刷ボタンの余白調整 */
+      .printButton {
+        /* 印刷ボタンのスタイル */
+        margin-top: 20px;
+        /* 上側の余白を20pxに設定 */
+      }
+
+      /* 演算子の余白調整 */
+      .operator {
+        /* 演算子のスタイル */
+        margin: 0 0px;
+        /* 左右の余白を0pxに設定 */
+      }
+
+      /* 小数問題の余白調整 */
+      .question.decimal {
+        margin-bottom: 8px;
+      }
+
+      /* ハンバーガーメニューの再定義（位置調整） */
+      #menu {
+        position: fixed;
+        top: 0px;
+        left: 3px;
+        z-index: 1000;
+      }
+
+      /* 三本線アイコンの再定義（サイズ調整） */
+      #menu-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
+        gap: 6px;
+      }
+
+      /* 三本線の各線の再定義（色・サイズ） */
+      #menu-icon span {
+        display: block;
+        height: 4px;
+        width: 100%;
+        background: #333;
+        border-radius: 2px;
+        transition: 0.3s;
+      }
+
+      /* メニュー項目の再定義（枠・影） */
+      #menu-items {
+        display: none;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-top: 8px;
+        padding: 10px 20px;
+      }
+
+      /* メニューが開いている時の表示（再定義） */
+      #menu.open #menu-items {
+        display: block;
+      }
+
+      /* メニュー内リンクの再定義（色・サイズ） */
+      #menu-items a {
+        display: block;
+        color: #333;
+        text-decoration: none;
+        margin: 8px 0;
+        font-size: 16px;
+      }
+
+      /* メニューリンクのホバー時（再定義） */
+      #menu-items a:hover {
+        color: #1976d2;
+      }
+
+      /* タイトルの位置調整 */
+      h1 {
+        margin-left: 18px;
+        margin-top: -19px;
+      }
+
+      /* プレビュー領域のスタイル改善 */
+      #previewArea {
+        background: linear-gradient(180deg,#ffffff 0%, #f3fbff 100%);
+        border: 1px solid #dbefff;
+        box-shadow: 0 2px 8px rgba(25,118,210,0.04);
+      }
+      #previewContent {
+        margin-top: 8px;
+      }
+      .preview-item {
+        padding: 10px 12px;
+        border-bottom: 1px dashed #e0e7ff;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        line-height: 1.7;
+      }
+      .preview-item:last-child { border-bottom: none; }
+      .preview-item .question, .preview-item .answer {
+        display: block;
+      }
+      .preview-item .question-number, .preview-item .answer-number { width: auto; margin-right:8px; }
+      .preview-grid { display: flex; gap: 18px; flex-wrap: wrap; }
+      .preview-qa { width: 48%; }
+
+      /* ステップ式フォームの動的強調表示（廃止） */
+      /*
+      .form-step {
+        opacity: 0.55;
+        transition: opacity 0.3s, box-shadow 0.3s;
+        box-shadow: none;
+        pointer-events: none;
+      }
+      .form-step.active {
+        opacity: 1;
+        box-shadow: 0 0 0 3px #1976d233;
+        pointer-events: auto;
+        z-index: 2;
+        position: relative;
+      }
+      .form-step.completed {
+        opacity: 0.85;
+        pointer-events: auto;
+      }
+      .form-step:not(.active):not(.completed) fieldset {
+        border-color: #b0b0b0;
+      }
+      .form-step.active fieldset {
+        border-color: #1976d2;
+      }
+      */
+      fieldset {
+        border: 1.5px solid #b0b0b0;
+        border-radius: 8px;
+        padding: 12px 16px 10px 16px;
+        margin-bottom: 14px;
+        background: #fafbfc;
+      }
+
+      /* フィールドセットタイトルの再定義 */
+      legend {
+        font-size: 1.08em;
+        font-weight: bold;
+        color: #1976d2;
+        padding: 0 8px;
+        letter-spacing: 0.03em;
+      }
+    </style>
+  <style>
+    /* 上付き指数を基数の右上に表示しつつ、基数自体を中央寄せに保つための補助スタイル
+       - base に右余白を作り、上付きは absolute で右上に固定する（重なりを避ける） */
+    .sup-wrapper { display:inline-block; position:relative; vertical-align:middle; padding-right:1.0em; }
+    .sup-wrapper .base { display:inline-block; text-align:center; padding-right:0.1em; }
+    /* 上付きは少し小さくし、右へずらして上に移動させる */
+    .sup-wrapper .sup { position:absolute; right:0.15em; top:-0.6em; font-size:0.72em; vertical-align:super; pointer-events:none; }
+    /* 分子・分母の中で基数を中央に保つ */
+    .fraction .numerator, .fraction .denominator { text-align:center; display:block; }
+    /* さらに桁数が多い場合の余白調整（必要に応じて調整して下さい） */
+    .sup-wrapper.large { padding-right:1.4em; }
+  </style>
+
+    <!-- ステップ式フォームの動的強調表示・自動スクロールJS（廃止） -->
+    <!--
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const steps = Array.from(document.querySelectorAll('.form-step'));
+        if (!steps.length) return;
+        // ステップごとの主要入力要素
+        const stepInputs = steps.map(step => step.querySelector('input,select,textarea'));
+        // 最初のステップをactive
+        steps.forEach((step, i) => {
+          if (i === 0) step.classList.add('active');
+          else step.classList.remove('active');
+          step.classList.remove('completed');
+        });
+
+        function advanceStep(idx) {
+          if (idx < 0 || idx >= steps.length) return;
+          steps.forEach((step, i) => {
+            if (i < idx) step.classList.add('completed');
+            else step.classList.remove('completed');
+            if (i === idx) step.classList.add('active');
+            else step.classList.remove('active');
+          });
+          // スクロール
+          steps[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // 入力/選択時に次のステップへ
+        stepInputs.forEach((input, idx) => {
+          if (!input) return;
+          input.addEventListener('change', function () {
+            advanceStep(idx + 1);
+          });
+          input.addEventListener('input', function () {
+            advanceStep(idx + 1);
+          });
+        });
+      });
+    </script>
+    -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("select").forEach(function(sel) {
+          sel.addEventListener("focus", function() {
+            sel.classList.add("open");
+          });
+          sel.addEventListener("blur", function() {
+            sel.classList.remove("open");
+          });
+          sel.addEventListener("change", function() {
+            sel.classList.remove("open");
+            sel.blur();
+          });
+        });
+      });
+    </script>
+    <script>
+  // 印刷ボタンの有効/無効を更新する関数
+  // この関数は、画面上に問題・回答・途中式が存在するかを判定して
+  // `.printButton` 要素を有効化/無効化します。
+  // 呼び出タイミング：問題生成後、プレビュー更新後、設定リセット後など。
+  function updatePrintButtons() {
+        try {
+          const hasQuestions = document.querySelector('#printArea .question') !== null;
+          const hasAnswers = document.querySelector('#answerArea .answer') !== null;
+          const hasDetailed = document.querySelector('#detailedAnswerArea .detailed-answer') !== null;
+          const enable = hasQuestions || hasAnswers || hasDetailed;
+          document.querySelectorAll('.printButton').forEach(function(btn) {
+            btn.disabled = !enable;
+            if (btn.disabled) btn.setAttribute('aria-disabled', 'true');
+            else btn.removeAttribute('aria-disabled');
+          });
+        } catch (e) {
+          console.error('updatePrintButtons error', e);
+        }
+      }
+      // 初期化：DOMロード後に印刷ボタン状態を反映
+      document.addEventListener('DOMContentLoaded', function(){ updatePrintButtons(); });
+    </script>
+    <!-- 項数(2/3)選択に応じて第3項用の桁数選択のみ表示する制御 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const operandSelect = document.getElementById('operandCount');
+        if (!operandSelect) return;
+
+        function setDisplay(el, show, displayInline) {
+          if (!el) return;
+          el.style.display = show ? (displayInline ? 'inline' : 'inline-block') : 'none';
+        }
+
+        function toggleThirdItemControls() {
+          const is3 = operandSelect.value === '3';
+          // 通常桁数の第3項ラベルとセレクト
+          const labelDigitC = document.querySelector('label[for="digitCountC"]');
+          const selectDigitC = document.getElementById('digitCountC');
+          setDisplay(labelDigitC, is3, true);
+          setDisplay(selectDigitC, is3, false);
+
+          // 小数用の第3項桁数・小数点以下
+          const labelDigitCdec = document.querySelector('label[for="digitCountC_decimal"]');
+          const selectDigitCdec = document.getElementById('digitCountC_decimal');
+          const labelDecimalDigitsC = document.querySelector('label[for="decimalDigitsC"]');
+          const selectDecimalDigitsC = document.getElementById('decimalDigitsC');
+          setDisplay(labelDigitCdec, is3, true);
+          setDisplay(selectDigitCdec, is3, false);
+          setDisplay(labelDecimalDigitsC, is3, true);
+          setDisplay(selectDecimalDigitsC, is3, false);
+
+          // 分数用の第3項分子・分母ラベルとセレクト
+          const labelNum3 = document.querySelector('label[for="numerator3Digits"]');
+          const selectNum3 = document.getElementById('numerator3Digits');
+          const labelDen3 = document.querySelector('label[for="denominator3Digits"]');
+          const selectDen3 = document.getElementById('denominator3Digits');
+          setDisplay(labelNum3, is3, true);
+          setDisplay(selectNum3, is3, false);
+          setDisplay(labelDen3, is3, true);
+          setDisplay(selectDen3, is3, false);
+
+          // 正負数の第3項ラジオ群（posneg）
+          const opCpos = document.getElementById('opCpos');
+          const opCgroup = opCpos ? opCpos.parentElement : null;
+          if (opCgroup) setDisplay(opCgroup, is3, false);
+
+          // 小数の第3項ラジオ群（decimal）
+          const decCpos = document.getElementById('decCpos');
+          const decCgroup = decCpos ? decCpos.parentElement : null;
+          if (decCgroup) setDisplay(decCgroup, is3, false);
+        }
+
+        operandSelect.addEventListener('change', toggleThirdItemControls);
+        // 初期表示
+        toggleThirdItemControls();
+      });
+    </script>
+  <!-- html2pdf bundle（html2canvas + jsPDF を含む）を導入：ページ内要素を直接PDF化してダウンロードします -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" defer></script>
+    <!-- 印刷用CSS（A4横・印刷時のレイアウト維持） -->
+    <style>
+      /* 印刷用CSSを最適化し、プリントエリアのレイアウトを画面通りに維持する */
+      /* 印刷時のレイアウト最適化 */
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 0;
+        }
+        html,
+        body {
+          background: #fff !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        /* 印刷時は#main-container.printingの装飾を維持し、.printing-areaのみ表示 */
+        @media print {
+          body > *:not(#main-container.printing) {
+            display: none !important;
+            visibility: hidden !important;
+          }
+          #main-container.printing > *:not(.printing-area) {
+            display: none !important;
+            visibility: hidden !important;
+          }
+          #main-container.printing {
+            max-width: none !important;
+            margin: 0 !important;
+            background: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          .printing-area {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            width: 97% !important;
+            margin: auto !important;
+            border: 2px solid #000 !important;
+            border-radius: 10px !important;
+            background: #f9f9f9 !important;
+            padding: 10px !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+            page-break-after: avoid !important;
+            page-break-before: avoid !important;
+            visibility: visible !important;
+          }
+          /* avoid forcing display for every element (breaks fraction layout) */
+          .printing-area * {
+            visibility: visible !important;
+          }
+          /* Ensure fraction layout is preserved in print/PDF: keep block/inline-block structure */
+          .printing-area .fraction { display: inline-block !important; text-align: center !important; vertical-align: middle !important; line-height: 1.2 !important; }
+          .printing-area .fraction .numerator, .printing-area .fraction .denominator { display: block !important; padding: 0 !important; }
+          .printing-area .fraction .fraction-bar { display: block !important; border-top: 2px solid #000 !important; width: 1.5em !important; margin: 0 auto !important; height: 0 !important; }
+          .printing-area .column {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 19.4% !important;
+            box-sizing: border-box !important;
+          }
+          .printing-area .question,
+          .printing-area .answer {
+            display: flex !important;
+            align-items: center !important;
+          }
+          .printing-area .fraction {
+            display: inline-block !important;
+          }
+        }
+      }
+    </style>
+    <!-- 分数表示用CSS -->
+    <style>
+      /* 分数の全体レイアウト */
+      .fraction {
+        /* 分数のスタイル */
+        display: inline-block;
+        /* インラインブロック要素に設定 */
+        text-align: center;
+        /* 中央寄せに設定 */
+        vertical-align: middle;
+        /* 垂直方向の中央揃えを設定 */
+        line-height: 1.2;
+        /* 行間を1.2に設定 */
+      }
+
+      /* 分子のレイアウト */
+      .fraction .numerator {
+        /* 分子のスタイル */
+        display: block;
+        /* ブロック要素に設定 */
+        padding-bottom: 2px;
+        /* 下側の余白を2pxに設定 */
+      }
+
+      /* 分数線のレイアウト */
+      .fraction .fraction-bar {
+        /* 分数線のスタイル */
+        display: block;
+        /* ブロック要素に設定 */
+        border-top: 2px solid #000;
+        /* 上側のボーダーを2pxの黒色に設定 */
+        width: 1.5em;
+        /* 幅を1.5emに設定 */
+        margin: 0 auto;
+        /* 左右のマージンを自動に設定（中央寄せ） */
+        height: 0;
+        /* 高さを0に設定 */
+      }
+
+      /* 分母のレイアウト */
+      .fraction .denominator {
+        /* 分母のスタイル */
+        display: block;
+        /* ブロック要素に設定 */
+        padding-top: 2px;
+        /* 上側の余白を2pxに設定 */
+      }
+    </style>
+  <!-- PDF用のレイアウト調整CSSは廃止されました（PDF保存機能削除） -->
+    <!-- 印刷時に黒枠を非表示にするルール -->
+  <style>
+    @media print {
+      /* 問題・回答エリア本体の枠を消す */
+      #printArea, #answerArea, #printArea.printing-area, #answerArea.printing-area, .printing-area {
+        border: none !important;
+        box-shadow: none !important;
+        background: #fff !important;
+      }
+      /* 内部のカラムや個々の問題要素の余計な枠も無効化 */
+      #printArea .column, #answerArea .column, #printArea .question, #answerArea .answer {
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+  <!-- 途中式エリアの枠表示 -->
+  <style>
+    /* 画面上で途中式エリアを黒枠で囲む */
+    #detailedAnswerArea {
+      border: 2px solid #000;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+    /* 印刷時 / PDF一時適用時に優先される調整 */
+    #detailedAnswerArea.printing-area {
+      border: 2px solid #000 !important;
+      border-radius: 10px !important;
+      background: #fff !important;
+      padding: 6px !important;
+    }
+  </style>
+    <!-- 問題生成・表示・回答生成のメインロジック -->
+    <script>
+  /**
+       * 問題・回答を生成して表示する関数
+       * @param {number} count - 問題数
+       */
+  // フォーム変更があったが「問題を生成」で反映されていない状態を示すフラグ
+  window.pendingApply = false;
+  // 補助: 反映済みにする関数
+  function markApplied() { try { window.pendingApply = false; } catch(e){} }
+  // 補助: 未適用にする関数
+  function markPending() { try { window.pendingApply = true; } catch(e){} }
+  /**
+   * 問題・回答を生成して表示するメイン関数
+   * - フォームの設定に従ってランダムな問題を作成し、
+   *   `#printArea`（問題）および `#answerArea`（回答）に DOM を生成します。
+   * - また、印刷/PDF 用の途中式入り領域 `#detailedAnswerArea` にも同時に詳細を追加します。
+   * @param {number} count - 生成する問題数（フォームの入力値をそのまま渡す）
+   */
+  function generateQuestions(count) {
+        // 問題・回答表示エリアを取得
+        const printArea = document.getElementById("printArea");
+        const answerArea = document.getElementById("answerArea");
+  // 既存の内容をクリア
+  // - 既に表示されている問題・回答・途中式を一旦消して新しく差し替えます。
+  // - detailedAnswerArea は generateQuestions 内で上書きしているため、
+  //   ここで明示的にクリアして新しい途中式を出力します。
+  printArea.innerHTML = "<div id='printTitleInArea' style='font-size:1.4em;font-weight:bold;color:#1976d2;margin-bottom:12px;'></div>";
+  answerArea.innerHTML = "<div id='answerTitleInArea' style='font-size:1.4em;font-weight:bold;color:#1976d2;margin-bottom:12px;'></div>";
+  const detailedAreaClear = document.getElementById('detailedAnswerArea');
+  if (detailedAreaClear) detailedAreaClear.innerHTML = '';
+
+        // タイトルを取得して印刷エリア内に表示
+        const printTitle = document.getElementById("printTitle").value;
+        document.getElementById("printTitleDisplay").textContent = printTitle ? printTitle : "";
+        document.getElementById("answerTitleDisplay").textContent = printTitle ? printTitle : "";
+        document.getElementById("printTitleInArea").textContent = printTitle ? printTitle : "";
+        document.getElementById("answerTitleInArea").textContent = printTitle ? printTitle : "";
+
+  // 有理数の種類を取得
+  // 有理数の種類（正数・負数・分数・小数など）により生成方法が分岐します。
+  // - 'fraction' の場合は分数特有の分子/分母生成・通分・約分ロジックを使います。
+  // - 'decimal' は小数点以下の桁数指定を考慮して生成します。
+  // - それ以外は整数扱いのランダム生成になります。
+        const rationalType = document.getElementById("rationalType").value;
+
+        // 選択された計算の種類を取得
+        // 選択された演算種類（加減乗除）を取得
+        const operations = [];
+        if (document.getElementById("add").checked) operations.push("add");
+        if (document.getElementById("subtract").checked)
+          operations.push("subtract");
+        if (document.getElementById("multiply").checked)
+          operations.push("multiply");
+        if (document.getElementById("divide").checked)
+          operations.push("divide");
+        if (document.getElementById("power") && document.getElementById("power").checked)
+          operations.push("power");
+        // "decimal" チェックボックスは存在しないので参照を削除
+
+        // 演算種類が未選択の場合は警告
+        if (operations.length === 0) {
+          alert("少なくとも1つの演算種類を選択してください。");
+          return;
+        }
+
+        // A, Bの桁数を取得
+        // 被演算子・演算子の桁数を取得
+        const digitCountA = parseInt(
+          document.getElementById("digitCountA").value
+        );
+        const digitCountB = parseInt(
+          document.getElementById("digitCountB").value
+        );
+        // 桁数から最小・最大値を計算
+        const maxA = Math.pow(10, digitCountA) - 1;
+        const minA = Math.pow(10, digitCountA - 1);
+        const maxB = Math.pow(10, digitCountB) - 1;
+        const minB = Math.pow(10, digitCountB - 1);
+
+        // 分数・小数の判定方法をrationalTypeの値で分岐するよう修正
+        // 分数・小数チェックボックス参照部分を削除
+        // 分数のみ選択時は最大50問・10問ごとに新しい列
+        // 分数のみ選択時の判定
+        const isFractionOnly = rationalType === "fraction";
+
+        // 小数のみ選択時の判定
+        // 小数のみ選択時の判定
+        const isDecimalOnly = rationalType === "decimal";
+
+        // 分数選択時は最大50問・10問ごと5列に自動設定し、入力欄のmax属性も自動で50に
+        // 問題数・列数の設定（分数時は最大50問、他は75問）
+        let maxQuestions, questionsPerColumn, maxColumns;
+        const questionCountInput = document.getElementById("questionCount");
+        const questionCountNote = document.getElementById("questionCountNote");
+        if (rationalType === "fraction") {
+          maxQuestions = 50;
+          questionsPerColumn = 10;
+          maxColumns = 5;
+          questionCountInput.max = 50;
+          if (parseInt(questionCountInput.value) > 50)
+            questionCountInput.value = 50;
+          questionCountNote.textContent =
+            "(10問ごとに改行されます。最大50問まで)";
+        } else {
+          maxQuestions = 75;
+          questionsPerColumn = 15;
+          maxColumns = 5;
+          questionCountInput.max = 75;
+          questionCountNote.textContent =
+            "(15問ごとに改行されます。最大75問まで)";
+        }
+        if (count > maxQuestions) count = maxQuestions;
+
+        // 最初の列を作成
+        let questionColumn = document.createElement("div");
+        questionColumn.className = "column";
+        printArea.appendChild(questionColumn);
+
+        let answerColumn = document.createElement("div");
+        answerColumn.className = "column";
+        answerArea.appendChild(answerColumn);
+
+        let columnCount = 1;
+
+        // 項数（2 or 3）取得
+        const operandCount = parseInt(document.getElementById('operandCount').value || '2');
+
+        // 問題数分だけ繰り返し生成
+        for (let i = 0; i < count; i++) {
+          let num1, num2;
+          let num3 = null;
+          // single operand mode: generate a small exponent for a^n problems
+          const singleExp = operandCount === 1 ? (Math.floor(Math.random() * 2) + 2) : null; // 2 or 3
+          // 有理数の種類ごとに数値を生成
+          if (rationalType === "positive") {
+            // 正数
+            num1 = Math.floor(Math.random() * (maxA - minA + 1)) + minA;
+            num2 = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
+            if (operandCount === 3) {
+              const digitC = parseInt(document.getElementById('digitCountC').value || '1');
+              const maxC = Math.pow(10, digitC) - 1;
+              const minC = Math.pow(10, digitC - 1);
+              num3 = Math.floor(Math.random() * (maxC - minC + 1)) + minC;
+            }
+          } else if (rationalType === "negative") {
+            // 負数
+            num1 = -1 * (Math.floor(Math.random() * (maxA - minA + 1)) + minA);
+            num2 = -1 * (Math.floor(Math.random() * (maxB - minB + 1)) + minB);
+            if (operandCount === 3) {
+              const digitC = parseInt(document.getElementById('digitCountC').value || '1');
+              const maxC = Math.pow(10, digitC) - 1;
+              const minC = Math.pow(10, digitC - 1);
+              num3 = -1 * (Math.floor(Math.random() * (maxC - minC + 1)) + minC);
+            }
+          } else if (rationalType === "posneg") {
+            // 正負数組み合わせ
+            const opAType = document.querySelector(
+              'input[name="opAType"]:checked'
+            ).value;
+            const opBType = document.querySelector(
+              'input[name="opBType"]:checked'
+            ).value;
+            function getNum(type, min, max) {
+              if (type === "positive")
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+              if (type === "negative")
+                return -1 * (Math.floor(Math.random() * (max - min + 1)) + min);
+              // ランダム
+              return Math.random() < 0.5
+                ? Math.floor(Math.random() * (max - min + 1)) + min
+                : -1 * (Math.floor(Math.random() * (max - min + 1)) + min);
+            }
+            num1 = getNum(opAType, minA, maxA);
+            num2 = getNum(opBType, minB, maxB);
+            if (operandCount === 3) {
+              const opCType = document.querySelector('input[name="opCType"]') ? document.querySelector('input[name="opCType"]').value : 'random';
+              const digitC = parseInt(document.getElementById('digitCountC').value || '1');
+              const maxC = Math.pow(10, digitC) - 1;
+              const minC = Math.pow(10, digitC - 1);
+              num3 = getNum(opCType, minC, maxC);
+            }
+          } else if (rationalType === "decimal") {
+            // 小数（被演算子・演算子それぞれの小数点以下桁数で生成）
+            const decimalDigitsA =
+              parseInt(document.getElementById("decimalDigitsA").value) || 2;
+            const decimalDigitsB =
+              parseInt(document.getElementById("decimalDigitsB").value) || 2;
+            // 小数の符号組み合わせ選択取得
+            const decAType = document.querySelector('input[name="decAType"]:checked').value;
+            const decBType = document.querySelector('input[name="decBType"]:checked').value;
+            function getDecimal(min, max, digits, sign) {
+              let val = (Math.random() * (max - min) + min).toFixed(digits);
+              if (sign === "positive") return val;
+              if (sign === "negative") return '(-' + val + ')';
+              // random: ランダム
+              return Math.random() < 0.5 ? val : '(-' + val + ')';
+            }
+            num1 = getDecimal(minA, maxA, decimalDigitsA, decAType);
+            num2 = getDecimal(minB, maxB, decimalDigitsB, decBType);
+            if (operandCount === 3) {
+              const decimalDigitsC = parseInt(document.getElementById('decimalDigitsC')?.value || '2');
+              const digitCountCdec = parseInt(document.getElementById('digitCountC_decimal')?.value || '1');
+              const minC = Math.pow(10, digitCountCdec - 1);
+              const maxC = Math.pow(10, digitCountCdec) - 1;
+              num3 = getDecimal(minC, maxC, decimalDigitsC, document.querySelector('input[name="decCType"]') ? document.querySelector('input[name="decCType"]').value : 'random');
+            }
+          }
+            // 演算種類を決定する際、累乗は主演算としても扱います。
+            // ただし「累乗のみ」の選択は無効とします（入力ハンドラでも制御していますが
+            // 生成時にも念のためチェックを行います）。
+            const mainOperations = operations.slice();
+            // If operandCount is 1, require power to be selected and force operation to 'power'
+            let operation;
+            if (operandCount === 1) {
+              if (!operations.includes('power')) {
+                alert('1項モードでは累乗（power）を選択してください。');
+                return;
+              }
+              operation = 'power';
+            } else {
+              // In multi-operand mode, disallow the case where only 'power' is selected
+              if (operations.length === 1 && operations[0] === 'power') {
+                alert('累乗のみを演算として選択することはできません。少なくとも1つの通常の演算（＋ - × ÷）を選択してください。');
+                return;
+              }
+              operation = mainOperations[Math.floor(Math.random() * mainOperations.length)];
+            }
+          let questionText = "";
+          let answerText = "";
+
+          // 分数問題の場合
+          if (rationalType === "fraction") {
+            // 分数桁数設定を取得
+            // 分数の桁数設定を取得
+            const numerator1Digits = parseInt(
+              document.getElementById("numerator1Digits").value
+            );
+            const denominator1Digits = parseInt(
+              document.getElementById("denominator1Digits").value
+            );
+            const numerator2Digits = parseInt(
+              document.getElementById("numerator2Digits").value
+            );
+            const denominator2Digits = parseInt(
+              document.getElementById("denominator2Digits").value
+            );
+            // 指定桁数のランダムな分子・分母を生成
+            function randomNDigits(d) {
+              const min = Math.pow(10, d - 1);
+              const max = Math.pow(10, d) - 1;
+              return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            const numerator1 = randomNDigits(numerator1Digits);
+            const denominator1 = randomNDigits(denominator1Digits);
+            const numerator2 = randomNDigits(numerator2Digits);
+            const denominator2 = randomNDigits(denominator2Digits);
+            // 3項目分数用桁数取得
+            const numerator3Digits = parseInt(document.getElementById('numerator3Digits') ? document.getElementById('numerator3Digits').value : '1');
+            const denominator3Digits = parseInt(document.getElementById('denominator3Digits') ? document.getElementById('denominator3Digits').value : '1');
+            let numerator3 = null;
+            let denominator3 = null;
+            if (operandCount === 3) {
+              numerator3 = randomNDigits(numerator3Digits);
+              denominator3 = randomNDigits(denominator3Digits);
+            }
+            // 演算子記号を決定
+            let fracOp;
+            if (operation === "add") fracOp = "+";
+            else if (operation === "subtract") fracOp = "-";
+            else if (operation === "multiply") fracOp = "×";
+            else if (operation === "divide") fracOp = "÷";
+            else if (operation === "power") fracOp = "^";
+            // 問題文（分数式）を生成（2項 or 3項）
+      if (fracOp === '^') {
+        // 分数の累乗の適用先をフォームから取得（存在しない場合は whole をデフォルト）
+        const powModeEl = document.getElementById('fractionPowerMode');
+        const powMode = powModeEl ? powModeEl.value : 'whole';
+        const exp = operandCount === 1 ? singleExp : (operandCount === 2 ? numerator2 : (numerator3 || numerator2));
+        if (powMode === 'whole') {
+          // (a/b)^n - show parentheses around the fraction
+          questionText = `
+            <span style="display:inline-block;vertical-align:middle;">
+              (<span style="display:inline-block; vertical-align:middle;">
+                <span class="fraction">
+                  <span class="numerator">${numerator1}</span>
+                  <span class="fraction-bar"></span>
+                  <span class="denominator">${denominator1}</span>
+                </span>
+              </span>)
+              <sup style="vertical-align:super; font-size:0.85em; margin-left:4px;">${exp}</sup>
+              =
+            </span>
+          `;
+        } else if (powMode === 'numerator') {
+          // a^n / b - separate base and sup so large base stays centered
+          const numBaseClass = (String(numerator1).length > 1) ? 'sup-wrapper large' : 'sup-wrapper';
+          questionText = `
+            <span style="display:inline-block;vertical-align:middle;">
+              <span class="fraction">
+                <span class="numerator"><span class="${numBaseClass}"><span class="base">${numerator1}</span><span class="sup">${exp}</span></span></span>
+                <span class="fraction-bar"></span>
+                <span class="denominator">${denominator1}</span>
+              </span>
+              =
+            </span>
+          `;
+        } else {
+          // denominator: a / b^n - separate base and sup so large base stays centered
+          const denBaseClass = (String(denominator1).length > 1) ? 'sup-wrapper large' : 'sup-wrapper';
+          questionText = `
+            <span style="display:inline-block;vertical-align:middle;">
+              <span class="fraction">
+                <span class="numerator">${numerator1}</span>
+                <span class="fraction-bar"></span>
+                <span class="denominator"><span class="${denBaseClass}"><span class="base">${denominator1}</span><span class="sup">${exp}</span></span></span>
+              </span>
+              =
+            </span>
+          `;
+        }
+      } else if (operandCount === 2) {
+        questionText = `
+            <span style="display:inline-block;vertical-align:middle;">
+              <span class="fraction">
+                <span class="numerator">${numerator1}</span>
+                <span class="fraction-bar"></span>
+                <span class="denominator">${denominator1}</span>
+              </span>
+              ${fracOp}
+              <span class="fraction">
+                <span class="numerator">${numerator2}</span>
+                <span class="fraction-bar"></span>
+                <span class="denominator">${denominator2}</span>
+              </span>
+              =
+            </span>
+          `;
+      } else {
+        questionText = `
+            <span style="display:inline-block;vertical-align:middle;">
+              <span class="fraction">
+                <span class="numerator">${numerator1}</span>
+                <span class="fraction-bar"></span>
+                <span class="denominator">${denominator1}</span>
+              </span>
+              ${fracOp}
+              <span class="fraction">
+                <span class="numerator">${numerator2}</span>
+                <span class="fraction-bar"></span>
+                <span class="denominator">${denominator2}</span>
+              </span>
+              ${fracOp}
+              <span class="fraction">
+                <span class="numerator">${numerator3}</span>
+                <span class="fraction-bar"></span>
+                <span class="denominator">${denominator3}</span>
+              </span>
+              =
+            </span>
+          `;
+      }
+            // 分数の計算（通分・約分・乗除対応）。累乗は簡易的に (a/b)^(c) を計算（分子・分母それぞれべき乗）
+            let ansNum, ansDen;
+            if (fracOp === "+") {
+              ansNum = numerator1 * denominator2 + numerator2 * denominator1;
+              ansDen = denominator1 * denominator2;
+            } else if (fracOp === "-") {
+              ansNum = numerator1 * denominator2 - numerator2 * denominator1;
+              ansDen = denominator1 * denominator2;
+            } else if (fracOp === "×") {
+              ansNum = numerator1 * numerator2;
+              ansDen = denominator1 * denominator2;
+            } else if (fracOp === "÷") {
+              ansNum = numerator1 * denominator2;
+              ansDen = denominator1 * numerator2;
+            } else if (fracOp === "^") {
+              // exponent: use numerator2 as exponent if operandCount===2, else numerator3
+              let exp = operandCount === 2 ? numerator2 : numerator3 || 2;
+              // keep exponent small to avoid huge numbers
+              exp = Math.max(0, Math.min(3, parseInt(exp.toString().slice(-1))));
+              // Determine mode: whole / numerator / denominator
+              const powModeEl = document.getElementById('fractionPowerMode');
+              const powMode = powModeEl ? powModeEl.value : 'whole';
+              if (powMode === 'whole') {
+                ansNum = Math.pow(numerator1, exp);
+                ansDen = Math.pow(denominator1, exp);
+              } else if (powMode === 'numerator') {
+                ansNum = Math.pow(numerator1, exp);
+                ansDen = denominator1;
+              } else {
+                // denominator
+                ansNum = numerator1;
+                ansDen = Math.pow(denominator1, exp);
+              }
+            }
+            // 最大公約数で約分
+            function gcd(a, b) {
+              return b === 0 ? a : gcd(b, a % b);
+            }
+            const g = gcd(Math.abs(ansNum), Math.abs(ansDen));
+            ansNum = ansNum / g;
+            ansDen = ansDen / g;
+            // 分子・分母の桁数に応じて分数線の長さを調整
+            const numLen = ansNum.toString().length;
+            const denLen = ansDen.toString().length;
+            const maxLen = Math.max(numLen, denLen);
+            // 1文字あたり1em、最低1.5em、最大4em程度に制限
+            const barWidth = Math.max(1.5, Math.min(maxLen * 1, 4));
+      // 回答文（約分済み分数）を生成
+      answerText = `
+            <span class="fraction">
+              <span class="numerator">${ansNum}</span>
+              <span class="fraction-bar" style="width: ${barWidth}em;"></span>
+              <span class="denominator">${ansDen}</span>
+            </span>
+          `;
+            // 小数問題の場合
+          } else if (rationalType === "decimal") {
+            // 小数の計算問題（2桁小数、加減乗除ランダム）
+            // 演算子記号を決定
+            let decOp = operation;
+            if (decOp === "add") decOp = "+";
+            if (decOp === "subtract") decOp = "-";
+            if (decOp === "multiply") decOp = "×";
+            if (decOp === "divide") decOp = "÷";
+            if (decOp === "power") decOp = "^";
+            // 問題文（小数式）を生成
+            if (decOp === '^') {
+              // 小数の累乗は 2 のような数に上付き指数を付ける
+              const exp = operandCount === 1 ? singleExp : (operandCount === 2 ? num2 : (num3 || num2));
+              questionText = `${num1}<sup style="vertical-align:super; font-size:0.85em;">${exp}</sup> = `;
+            } else {
+              questionText = `${num1} ${decOp} ${num2} = `;
+            }
+            // 2項 or 3項の計算
+            let decAns = 0;
+            if (operandCount === 2) {
+              switch (decOp) {
+                case "+":
+                  decAns = (parseFloat(num1) + parseFloat(num2)).toFixed(2);
+                  break;
+                case "-":
+                  decAns = (parseFloat(num1) - parseFloat(num2)).toFixed(2);
+                  break;
+                case "×":
+                  decAns = (parseFloat(num1) * parseFloat(num2)).toFixed(2);
+                  break;
+                case "÷":
+                  decAns = (parseFloat(num1) / parseFloat(num2)).toFixed(2);
+                  break;
+                case "^":
+                  // small exponent
+                  try {
+                    const e = operandCount === 1 ? singleExp : Math.max(0, Math.min(3, Math.round(parseFloat(num2))));
+                    decAns = Math.pow(parseFloat(num1), e).toFixed(2);
+                  } catch (e) { decAns = 'エラー'; }
+                  break;
+              }
+            } else {
+              // 3項目は左から順に計算（(a op b) op c）
+              let intermediate = 0;
+              switch (decOp) {
+                case "+":
+                  intermediate = parseFloat(num1) + parseFloat(num2);
+                  break;
+                case "-":
+                  intermediate = parseFloat(num1) - parseFloat(num2);
+                  break;
+                case "×":
+                  intermediate = parseFloat(num1) * parseFloat(num2);
+                  break;
+                case "÷":
+                  intermediate = parseFloat(num1) / parseFloat(num2);
+                  break;
+              }
+              // 第3項は同じ演算子を使用（シンプルな実装）
+              switch (decOp) {
+                case "+":
+                  decAns = (intermediate + parseFloat(num3)).toFixed(2);
+                  break;
+                case "-":
+                  decAns = (intermediate - parseFloat(num3)).toFixed(2);
+                  break;
+                case "×":
+                  decAns = (intermediate * parseFloat(num3)).toFixed(2);
+                  break;
+                case "÷":
+                  decAns = (intermediate / parseFloat(num3)).toFixed(2);
+                  break;
+                case "^":
+                  try {
+                    const e = Math.max(0, Math.min(3, Math.round(parseFloat(num3))));
+                    decAns = Math.pow(intermediate, e).toFixed(2);
+                  } catch (e) { decAns = 'エラー'; }
+                  break;
+              }
+            }
+            answerText = decAns;
+            // 正数・負数・正負数の場合
+          } else {
+            // 正数・負数・正負数
+            let n1 = num1,
+              n2 = num2;
+            // 正数で減法かつnum1<num2なら入れ替え（答えが負にならないように）
+            if (
+              rationalType === "positive" &&
+              operation === "subtract" &&
+              num1 < num2
+            ) {
+              [num1, num2] = [num2, num1];
+              n1 = num1;
+              n2 = num2;
+            }
+            // 負数は必ず括弧で囲む
+            if (rationalType === "negative" || rationalType === "posneg") {
+              if (n1 < 0) n1 = `(${n1})`;
+              if (n2 < 0) n2 = `(${n2})`;
+            }
+            // 演算子記号を決定
+            let opStr = operation;
+            if (opStr === "add") opStr = "+";
+            if (opStr === "subtract") opStr = "-";
+            if (opStr === "multiply") opStr = "×";
+            if (opStr === "divide") opStr = "÷";
+            if (opStr === "power") opStr = "^";
+            // 問題文（整数式）を生成（2項 or 3項）
+            if (operandCount === 2) {
+              if (opStr === '^') {
+                // 表示: a^b -> a<sup>b</sup>
+                questionText = `${n1}<sup style="vertical-align:super; font-size:0.85em;">${n2}</sup> = `;
+              } else {
+                questionText = `${n1} <span class="operator">${opStr}</span> ${n2} = `;
+              }
+            } else {
+              let n3 = num3;
+              if (rationalType === 'negative' || rationalType === 'posneg') {
+                if (n3 < 0) n3 = `(${n3})`;
+              }
+              if (opStr === '^') {
+                // (a ^ b) ^ c のような表示はシンプルに (a^b)^c を左結合的に表記
+                questionText = `${n1}<span class="operator">${opStr}</span><sup style="vertical-align:super; font-size:0.85em;">${n2}</sup> <span class="operator">${opStr}</span> ${n3} = `;
+              } else {
+                questionText = `${n1} <span class="operator">${opStr}</span> ${n2} <span class="operator">${opStr}</span> ${n3} = `;
+              }
+            }
+            // 回答（計算結果）
+            if (operandCount === 1) {
+              // single operand power case for integers/positives/negatives
+              if (operation === 'power') {
+                const e = singleExp;
+                questionText = `${n1}<sup style="vertical-align:super; font-size:0.85em;">${e}</sup> = `;
+                try { answerText = Math.pow(parseFloat(n1), e).toString(); } catch(e) { answerText = 'エラー'; }
+              } else {
+                // other operations don't make sense for 1-operand mode
+                questionText = `${n1} = `;
+                answerText = '';
+              }
+            } else if (operandCount === 2) {
+              switch (operation) {
+                case "add":
+                  answerText = (parseFloat(num1) + parseFloat(num2)).toString();
+                  break;
+                case "subtract":
+                  answerText = (parseFloat(num1) - parseFloat(num2)).toString();
+                  break;
+                case "multiply":
+                  answerText = (parseFloat(num1) * parseFloat(num2)).toString();
+                  break;
+                case "divide":
+                  answerText = (parseFloat(num1) / parseFloat(num2)).toFixed(2);
+                  break;
+                case "power":
+                  try {
+                    const e = Math.max(0, Math.min(3, Math.round(parseFloat(num2))));
+                    answerText = Math.pow(parseFloat(num1), e).toString();
+                  } catch (e) { answerText = 'エラー'; }
+                  break;
+              }
+            } else {
+              // 3項目は左から順に計算（(a op b) op c）
+              let intermediate = 0;
+              switch (operation) {
+                case "add":
+                  intermediate = parseFloat(num1) + parseFloat(num2);
+                  break;
+                case "subtract":
+                  intermediate = parseFloat(num1) - parseFloat(num2);
+                  break;
+                case "multiply":
+                  intermediate = parseFloat(num1) * parseFloat(num2);
+                  break;
+                case "divide":
+                  intermediate = parseFloat(num1) / parseFloat(num2);
+                  break;
+                case "power":
+                  intermediate = Math.pow(parseFloat(num1), Math.max(0, Math.min(3, Math.round(parseFloat(num2)))));
+                  break;
+              }
+              switch (operation) {
+                case "add":
+                  answerText = (intermediate + parseFloat(num3)).toString();
+                  break;
+                case "subtract":
+                  answerText = (intermediate - parseFloat(num3)).toString();
+                  break;
+                case "multiply":
+                  answerText = (intermediate * parseFloat(num3)).toString();
+                  break;
+                case "divide":
+                  answerText = (intermediate / parseFloat(num3)).toFixed(2);
+                  break;
+                case "power":
+                  try {
+                    const e = Math.max(0, Math.min(3, Math.round(parseFloat(num3))));
+                    answerText = Math.pow(intermediate, e).toString();
+                  } catch (e) { answerText = 'エラー'; }
+                  break;
+              }
+            }
+          }
+
+          // 問題表示用divを生成
+          const question = document.createElement("div");
+          question.className = "question";
+          if (rationalType === "decimal") question.classList.add("decimal");
+
+          // 問題番号
+          const questionNumber = document.createElement("div");
+          questionNumber.className = "question-number";
+          questionNumber.textContent = `${i + 1}．`;
+
+          // 問題文
+          const questionTextDiv = document.createElement("div");
+          questionTextDiv.className = "question-text";
+          questionTextDiv.innerHTML = questionText;
+
+          question.appendChild(questionNumber);
+          question.appendChild(questionTextDiv);
+
+          // 回答表示用divを生成
+          const answer = document.createElement("div");
+          answer.className = "answer";
+
+          // 回答番号
+          const answerNumber = document.createElement("div");
+          answerNumber.className = "answer-number";
+          answerNumber.textContent = `${i + 1}．`;
+
+          // 回答文（答え部分だけ赤色）
+          const answerTextDiv = document.createElement("div");
+          answerTextDiv.className = "answer-text";
+          answerTextDiv.innerHTML = `${questionText}<span style="color:red">${answerText}</span>`;
+
+          // 回答要素に番号と答えを追加（途中式は印刷/PDF用の別エリアに出力）
+          answer.appendChild(answerNumber);
+          answer.appendChild(answerTextDiv);
+
+          // 途中式入りの詳細回答（印刷/PDF用エリア）を作成
+          try {
+            const detailedArea = document.getElementById('detailedAnswerArea');
+            if (detailedArea) {
+              const detailedDiv = document.createElement('div');
+              detailedDiv.className = 'detailed-answer';
+              // 問題文・最終解答・途中式を整理して挿入
+              // Build textbook-style step-by-step intermediate solution
+              // We'll create an ordered list of steps depending on the problem type
+              let steps = [];
+              // small gcd and lcm helpers for use in steps
+              function gcdLocal(a, b) {
+                a = Math.abs(a); b = Math.abs(b);
+                while (b) { const t = a % b; a = b; b = t; }
+                return a;
+              }
+              function lcmLocal(a, b) {
+                return Math.abs(a * b) / gcdLocal(a, b) || 0;
+              }
+
+              // Header: question and final answer
+              let inner = '';
+              inner += `<div class="detailed-number">${i + 1}．</div>`;
+              inner += `<div class="detailed-question">${questionText}</div>`;
+              inner += `<div class="detailed-final">答: <span style="color:red">${answerText}</span></div>`;
+
+              try {
+                // helper to safely parse numeric values which may be strings like '(-1.23)'
+                function parseVal(v) {
+                  if (typeof v === 'number') return v;
+                  if (typeof v === 'string') {
+                    // extract first numeric substring, handle parentheses used for display '(-1.23)'
+                    const m = v.match(/-?\d+(?:\.\d+)?/);
+                    return m ? parseFloat(m[0]) : NaN;
+                  }
+                  return Number(v);
+                }
+                if (rationalType === 'fraction') {
+                  // Use the local variables numerator1/denominator1 etc. (generated above)
+                  // Recompute useful intermediate values for explanation
+                  const n1 = numerator1, d1 = denominator1, n2 = numerator2, d2 = denominator2;
+                  // If 3項ある, include n3/d3
+                  const n3 = (typeof numerator3 !== 'undefined' && numerator3 !== null) ? numerator3 : null;
+                  const d3 = (typeof denominator3 !== 'undefined' && denominator3 !== null) ? denominator3 : null;
+
+                  if (fracOp === '+' || fracOp === '-') {
+                    // 通分の手順
+                    const L = lcmLocal(d1, d2);
+                    const m1 = L / d1;
+                    const m2 = L / d2;
+                    steps.push(`通分: 分母 ${d1} と ${d2} の最小公倍数は ${L}。`);
+                    steps.push(`分子をそれぞれ ${m1} 倍, ${m2} 倍して通分する: ${n1}×${m1} = ${n1 * m1} , ${n2}×${m2} = ${n2 * m2}`);
+                    // 合成
+                    const combined = fracOp === '+' ? (n1 * m1 + n2 * m2) : (n1 * m1 - n2 * m2);
+                    steps.push(`分子を ${fracOp === '+' ? '加算' : '減算'}: ${fracOp === '+' ? `${n1 * m1} + ${n2 * m2}` : `${n1 * m1} - ${n2 * m2}`} = ${combined}`);
+                    steps.push(`結果: ${combined}/${L}`);
+                    // 約分
+                    const g = gcdLocal(combined, L);
+                    if (g > 1) {
+                      steps.push(`最大公約数: ${g}。よって約分して ${combined}/${L} = ${combined / g}/${L / g}`);
+                    } else {
+                      steps.push('約分できない（既に既約）。');
+                    }
+                  } else if (fracOp === '×') {
+                    steps.push(`分子どうし、分母どうしを掛ける: ${n1}×${n2} = ${n1 * n2} , ${d1}×${d2} = ${d1 * d2}`);
+                    const prodNum = n1 * n2;
+                    const prodDen = d1 * d2;
+                    steps.push(`結果: ${prodNum}/${prodDen}`);
+                    const g = gcdLocal(prodNum, prodDen);
+                    if (g > 1) steps.push(`約分: 最大公約数 ${g}、よって ${prodNum}/${prodDen} = ${prodNum / g}/${prodDen / g}`);
+                  } else if (fracOp === '÷') {
+                    steps.push(`割り算は逆数をかける: ${n2}/${d2} の逆数は ${d2}/${n2}`);
+                    const num = n1 * d2;
+                    const den = d1 * n2;
+                    steps.push(`掛け算に直すと: ${n1}/${d1} × ${d2}/${n2} = ${num}/${den}`);
+                    const g = gcdLocal(num, den);
+                    if (g > 1) steps.push(`約分: 最大公約数 ${g}、よって ${num}/${den} = ${num / g}/${den / g}`);
+                  } else if (fracOp === '^') {
+                    // 累乗: (a/b)^e => a^e / b^e
+                    const exp = operandCount === 2 ? numerator2 : (numerator3 || numerator2);
+                    const e = Math.max(0, Math.min(3, parseInt(exp.toString().slice(-1))));
+                    steps.push(`累乗: ( ${n1}/${d1} )^${e} = ${Math.pow(n1, e)}/${Math.pow(d1, e)}`);
+                    const powNum = Math.pow(n1, e);
+                    const powDen = Math.pow(d1, e);
+                    const g = gcdLocal(powNum, powDen);
+                    if (g > 1) steps.push(`約分: 最大公約数 ${g}、よって ${powNum}/${powDen} = ${powNum / g}/${powDen / g}`);
+                  }
+                  // join steps into HTML lines
+                  inner += `<div class="detailed-steps"><ol>` + steps.map(s => `<li>${s}</li>`).join('') + `</ol></div>`;
+                } else if (rationalType === 'decimal') {
+                  // 小数は計算式と丸めを見せる
+                  // Try to reconstruct operation symbol
+                  const opSymbol = (operation === 'add' && '+') || (operation === 'subtract' && '-') || (operation === 'multiply' && '×') || (operation === 'divide' && '÷') || (operation === 'power' && '^') || '';
+                  if (operandCount === 2) {
+                    steps.push(`${num1} ${opSymbol} ${num2} を計算します。`);
+                    if (opSymbol === '^') {
+                      const e = Math.max(0, Math.min(3, Math.round(parseVal(num2))));
+                      steps.push(`${num1}^${e} = ${Math.pow(parseVal(num1), e).toFixed(2)}`);
+                    } else {
+                      const aVal = parseVal(num1);
+                      const bVal = parseVal(num2);
+                      const calc = (() => {
+                        switch (opSymbol) {
+                          case '+': return (aVal + bVal).toFixed(2);
+                          case '-': return (aVal - bVal).toFixed(2);
+                          case '×': return (aVal * bVal).toFixed(2);
+                          case '÷': return (aVal / bVal).toFixed(2);
+                        }
+                        return answerText;
+                      })();
+                      steps.push(`計算結果（小数第2位まで表示）: ${calc}`);
+                    }
+                  } else {
+                    // 3項は左から順に計算する説明
+                    steps.push('3項の計算は左から順に行います。');
+                    try {
+                      let intermediate = parseVal(num1);
+                      if (operation === 'add') intermediate = intermediate + parseVal(num2);
+                      if (operation === 'subtract') intermediate = intermediate - parseVal(num2);
+                      if (operation === 'multiply') intermediate = intermediate * parseVal(num2);
+                      if (operation === 'divide') intermediate = intermediate / parseVal(num2);
+                      steps.push(`まず ${num1} と ${num2} を計算して ${intermediate.toFixed(2)} になります。`);
+                      let final = intermediate;
+                      if (operation === 'add') final = final + parseVal(num3);
+                      if (operation === 'subtract') final = final - parseVal(num3);
+                      if (operation === 'multiply') final = final * parseVal(num3);
+                      if (operation === 'divide') final = final / parseVal(num3);
+                      steps.push(`次に ${num3} と計算して最終結果は ${final.toFixed(2)} です。`);
+                    } catch (e) { steps.push('計算途中の説明を作成できませんでした。'); }
+                  }
+                  inner += `<div class="detailed-steps"><ol>` + steps.map(s => `<li>${s}</li>`).join('') + `</ol></div>`;
+                } else {
+                  // 正数・負数・正負数（整数系）
+                  if (operandCount === 2) {
+                    if (operation === 'power') {
+                      const e = Math.max(0, Math.min(3, Math.round(parseFloat(num2))));
+                      steps.push(`${num1} を ${e} 乗します。${num1}^${e} = ${Math.pow(parseFloat(num1), e)}`);
+                    } else if (operation === 'divide') {
+                      const a = parseFloat(num1), b = parseFloat(num2);
+                      const q = (a / b).toFixed(2);
+                      steps.push(`${num1} ÷ ${num2} = ${q} （小数第2位まで）`);
+                    } else {
+                      const a = parseFloat(num1), b = parseFloat(num2);
+                      const mapOp = operation === 'add' ? '+' : operation === 'subtract' ? '-' : operation === 'multiply' ? '×' : operation;
+                      let res;
+                      if (operation === 'add') res = a + b;
+                      if (operation === 'subtract') res = a - b;
+                      if (operation === 'multiply') res = a * b;
+                      steps.push(`${num1} ${mapOp} ${num2} = ${res}`);
+                    }
+                  } else {
+                    // 3項は左から計算
+                    steps.push('3項は左から順に計算します：');
+                    try {
+                      let inter = parseFloat(num1);
+                      if (operation === 'add') inter = inter + parseFloat(num2);
+                      if (operation === 'subtract') inter = inter - parseFloat(num2);
+                      if (operation === 'multiply') inter = inter * parseFloat(num2);
+                      if (operation === 'divide') inter = inter / parseFloat(num2);
+                      steps.push(`まず ${num1} と ${num2} を計算して ${inter} になりました。次に ${num3} を計算します。`);
+                      let final = inter;
+                      if (operation === 'add') final = final + parseFloat(num3);
+                      if (operation === 'subtract') final = final - parseFloat(num3);
+                      if (operation === 'multiply') final = final * parseFloat(num3);
+                      if (operation === 'divide') final = final / parseFloat(num3);
+                      steps.push(`最終結果: ${final}`);
+                    } catch (e) { steps.push('計算途中の説明を作成できませんでした。'); }
+                  }
+                  inner += `<div class="detailed-steps"><ol>` + steps.map(s => `<li>${s}</li>`).join('') + `</ol></div>`;
+                }
+              } catch (e) {
+                // より詳細なデバッグ情報をコンソールに出す（ユーザーの報告用）
+                try { console.error('detailed generation error', e, { i, rationalType, operation, operandCount, numerator1, denominator1, numerator2, denominator2, numerator3, denominator3, num1, num2, num3, fracOp }); } catch(err) { console.error('detailed generation error (minimal)', e); }
+                // UIには簡潔なエラーメッセージと可能なら例外メッセージを表示
+                const msg = e && e.message ? e.message : String(e);
+                inner += `<div class="detailed-steps">途中式の生成中にエラーが発生しました: ${msg}</div>`;
+              }
+              detailedDiv.innerHTML = inner;
+              detailedArea.appendChild(detailedDiv);
+            }
+          } catch (e) { console.error('detailed answer append error', e); }
+
+          // 列の切り替え（指定数ごとに新しい列を作成）
+          if (
+            i % questionsPerColumn === 0 &&
+            i !== 0 &&
+            columnCount < maxColumns
+          ) {
+            questionColumn = document.createElement("div");
+            questionColumn.className = "column";
+            printArea.appendChild(questionColumn);
+
+            answerColumn = document.createElement("div");
+            answerColumn.className = "column";
+            answerArea.appendChild(answerColumn);
+
+            columnCount++;
+          }
+
+          // 問題・回答を列に追加
+          questionColumn.appendChild(question);
+          answerColumn.appendChild(answer);
+        }
+  // 生成処理が終わったら印刷ボタンの状態を更新
+  try { if (typeof updatePrintButtons === 'function') updatePrintButtons(); } catch(e){}
+  // 生成（適用）されたので未適用フラグをクリア
+  try { markApplied(); } catch(e){}
+      }
+
+      /**
+       * 指定エリアのみ印刷する関数（旧バージョン）
+       * @param {string} elementId - 印刷対象エリアID
+       */
+      function printElement(elementId) {
+        // すべての印刷用クラスを一度外す
+        document
+          .querySelectorAll(".printing")
+          .forEach((el) => el.classList.remove("printing"));
+        // 指定エリアだけ印刷用クラスを付与
+        const target = document.getElementById(elementId);
+        target.classList.add("printing");
+        // 印刷後にクラスを外す
+        const removePrintingClass = function () {
+          target.classList.remove("printing");
+          window.removeEventListener("afterprint", removePrintingClass);
+        };
+        window.addEventListener("afterprint", removePrintingClass);
+        window.print();
+      }
+    </script>
+    <!-- rationalTypeと分数・小数チェックボックスの連動制御 -->
+    <script>
+      // rationalType（有理数リスト）と分数・小数チェックボックスの連動
+      // ページロード時に有理数種別とチェックボックスを同期
+      document.addEventListener("DOMContentLoaded", function () {
+        const rationalType = document.getElementById("rationalType");
+        const fraction = document.getElementById("fraction");
+        const decimal = document.getElementById("decimal");
+        // 正負数オプション表示制御
+        const posnegOptionArea = document.getElementById("posnegOptionArea");
+        // 有理数種別変更時のチェックボックス同期関数
+        function syncCheckboxes() {
+          if (rationalType.value === "fraction") {
+            if (fraction) fraction.checked = true;
+            if (decimal) decimal.checked = false;
+          } else if (rationalType.value === "decimal") {
+            if (decimal) decimal.checked = true;
+            if (fraction) fraction.checked = false;
+          } else {
+            if (fraction) fraction.checked = false;
+            if (decimal) decimal.checked = false;
+          }
+          // 正負数選択時のみオプション表示
+          if (posnegOptionArea) {
+            if (rationalType.value === "posneg" || rationalType.value === "decimal") {
+              posnegOptionArea.style.display = "block";
+            } else {
+              posnegOptionArea.style.display = "none";
+            }
+          }
+        }
+        rationalType.addEventListener("change", syncCheckboxes);
+        // 初期表示時も同期
+        syncCheckboxes();
+      });
+    </script>
+    <!-- 問題数の最大値制御（分数時は50、それ以外は75） -->
+    <script>
+      // 有理数種別変更時に問題数の最大値・注記を更新
+      document.addEventListener("DOMContentLoaded", function () {
+        const rationalType = document.getElementById("rationalType");
+        const questionCountInput = document.getElementById("questionCount");
+        const questionCountNote = document.getElementById("questionCountNote");
+        function updateQuestionCountLimit() {
+          if (rationalType.value === "fraction") {
+            questionCountInput.max = 50;
+            if (parseInt(questionCountInput.value) > 50)
+              questionCountInput.value = 50;
+            questionCountNote.textContent =
+              "(10問ごとに改行されます。最大50問まで)";
+          } else {
+            questionCountInput.max = 75;
+            questionCountNote.textContent =
+              "(15問ごとに改行されます。最大75問まで)";
+          }
+        }
+        rationalType.addEventListener("change", updateQuestionCountLimit);
+        updateQuestionCountLimit();
+      });
+    </script>
+    <!-- 分数選択時の排他制御（加減乗除と分数の排他） -->
+    <script>
+      // 分数選択時の排他制御
+      // 分数選択時は加減乗除チェックボックスを無効化
+      document.addEventListener("DOMContentLoaded", function () {
+        const fraction = document.getElementById("fraction");
+        // others は null を除外して安全に扱う
+  let others = ["add", "subtract", "multiply", "divide", "power"].map((id) =>
+          document.getElementById(id)
+        ).filter(Boolean);
+        if (fraction) {
+          fraction.addEventListener("change", function () {
+            if (fraction.checked) {
+              others.forEach((cb) => {
+                if (!cb) return;
+                cb.checked = false;
+                cb.disabled = true;
+              });
+            } else {
+              others.forEach((cb) => {
+                if (!cb) return;
+                cb.disabled = false;
+              });
+            }
+          });
+          others.forEach((cb) => {
+            if (!cb) return;
+            cb.addEventListener("change", function () {
+              if (cb.checked) {
+                fraction.checked = false;
+                fraction.disabled = true;
+              }
+              if (!others.some((c) => c && c.checked)) {
+                fraction.disabled = false;
+              }
+            });
+          });
+        } else {
+          // fraction が見つからない場合は others の change ハンドラのみ準備
+          others.forEach((cb) => {
+            if (!cb) return;
+            cb.addEventListener("change", function () {
+              // nothing to toggle for fraction
+            });
+          });
+        }
+      });
+    </script>
+    <!-- 分数選択時の最大値制御（加減乗除と分数の組み合わせで最大値切替） -->
+    <script>
+      // 分数選択時は最大値を50に、それ以外は75に
+      // 分数選択時は最大値を50に、それ以外は75に
+      document.addEventListener("DOMContentLoaded", function () {
+        const fraction = document.getElementById("fraction");
+        const questionCount = document.getElementById("questionCount");
+        const questionCountNote = document.getElementById("questionCountNote");
+  const others = ["add", "subtract", "multiply", "divide", "power"].map((id) =>
+          document.getElementById(id)
+        );
+        function updateMax() {
+          if (fraction && fraction.checked && others.every((cb) => !cb.checked)) {
+            questionCount.max = 50;
+            if (parseInt(questionCount.value) > 50) questionCount.value = 50;
+            questionCountNote.textContent =
+              "(10問ごとに改行されます。最大50問まで)";
+          } else {
+            questionCount.max = 75;
+            questionCountNote.textContent =
+              "(15問ごとに改行されます。最大75問まで)";
+          }
+        }
+        // 初期表示時にも反映
+        updateMax();
+        if (fraction) fraction.addEventListener("change", updateMax);
+        others.forEach((cb) => cb.addEventListener("change", updateMax));
+      });
+    </script>
+    <!-- 分数選択時の桁数選択フォーム表示制御 -->
+    <script>
+      // 分数選択時は通常の桁数選択フォーム（被演算子・演算子のselectとラベル・記号・注記）だけを非表示、分数用桁数選択エリアは分数時のみ表示
+      // 分数選択時は通常の桁数選択フォームを非表示、分数用桁数選択エリアのみ表示
+      document.addEventListener("DOMContentLoaded", function () {
+        const rationalType = document.getElementById("rationalType");
+        const fractionDigitsArea =
+          document.getElementById("fractionDigitsArea");
+        const normalDigitsArea = document.getElementById("normalDigitsArea");
+        const digitsRowNormal = document.getElementById("digitsRowNormal");
+        const digitsRowDecimal = document.getElementById("digitsRowDecimal");
+        function toggleDigitsForms() {
+          const isFraction = rationalType.value === "fraction";
+          const isDecimal = rationalType.value === "decimal";
+          // 分数時は分数用のみ表示
+          if (fractionDigitsArea)
+            fractionDigitsArea.style.display = isFraction ? "block" : "none";
+          // 通常の桁数選択（小数以外）
+          if (digitsRowNormal)
+            digitsRowNormal.style.display =
+              isFraction || isDecimal ? "none" : "block";
+          // 小数時のみ小数用行分け表示
+          if (digitsRowDecimal)
+            digitsRowDecimal.style.display = isDecimal ? "block" : "none";
+          // フィールドセット自体は分数以外で表示
+          if (normalDigitsArea)
+            normalDigitsArea.style.display = isFraction ? "none" : "block";
+        }
+        rationalType.addEventListener("change", toggleDigitsForms);
+        toggleDigitsForms();
+      });
+    </script>
+    <!-- ハンバーガーメニューの開閉制御 -->
+    <script>
+      // メニューアイコン（三本線）クリック時の開閉制御
+      function toggleMenu() {
+        var menu = document.getElementById("menu");
+        menu.classList.toggle("open");
+      }
+    </script>
+    <script>
+      // メニュー内のイントロを開くリンクとモーダル表示の連携
+      document.addEventListener('DOMContentLoaded', function(){
+        const introLink = document.getElementById('openIntroFromMenu');
+        const introModal = document.getElementById('introModal');
+        const menu = document.getElementById('menu');
+        if (introLink && introModal) {
+          introLink.addEventListener('click', function(e){
+            e.preventDefault();
+            // メニューを閉じる
+            if (menu && menu.classList.contains('open')) menu.classList.remove('open');
+            // モーダル表示
+            introModal.style.display = 'flex';
+          });
+        }
+      });
+    </script>
+    <script>
+      // メニューのホームを押したらメイン作成ページへ移動（スクロール＆フォーカス）
+      document.addEventListener('DOMContentLoaded', function(){
+        const homeLink = document.getElementById('menuHome');
+        const main = document.getElementById('main-container');
+        const menu = document.getElementById('menu');
+        if (homeLink && main) {
+          homeLink.addEventListener('click', function(e){
+            e.preventDefault();
+            if (menu && menu.classList.contains('open')) menu.classList.remove('open');
+            // スムーズスクロールしてフォーカス
+            main.scrollIntoView({behavior:'smooth', block:'start'});
+            // フォーカス可能にしてフォーカスを当てる
+            main.setAttribute('tabindex','-1');
+            main.focus();
+            // tabindex は後で削除
+            setTimeout(()=>{ main.removeAttribute('tabindex'); }, 800);
+          });
+        }
+      });
+    </script>
+    <!-- rationalTypeと分数・小数チェックボックスの連動＋正負数オプション表示制御 -->
+    <script>
+      // rationalType（有理数リスト）と分数・小数チェックボックスの連動＋正負数オプション表示制御
+      // 有理数種別変更時に正負数組み合わせエリアの表示制御
+      document.addEventListener("DOMContentLoaded", function () {
+        const rationalType = document.getElementById("rationalType");
+        const posnegOptionArea = document.getElementById("posnegOptionArea");
+        // fraction/decimalチェックボックスは未使用でも参照OK
+        function syncOptionAreas() {
+          // 正負数選択時のみ組み合わせエリア表示
+          if (rationalType.value === "posneg") {
+            posnegOptionArea.style.display = "block";
+          } else {
+            posnegOptionArea.style.display = "none";
+          }
+        }
+        rationalType.addEventListener("change", syncOptionAreas);
+        // 初期表示時も同期（初期値がselectedでなくても反映されるように）
+        setTimeout(syncOptionAreas, 0);
+      });
+    </script>
+      <!-- 設定の保存/読み込み/リセット と プレビュー自動生成、ショートカット機能 -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          (function(){
+            const form = document.querySelector('form');
+            const saveBtn = document.getElementById('saveSettings');
+            const loadBtn = document.getElementById('loadSettings');
+            const resetBtn = document.getElementById('resetSettings');
+            const previewBtn = document.getElementById('previewBtn');
+            const previewContent = document.getElementById('previewContent');
+
+            const STORAGE_KEY = 'prehtml_settings_v1';
+            const STORAGE_LIST_KEY = 'prehtml_settings_list_v1';
+
+            // フォームの現在設定をオブジェクトにまとめるユーティリティ
+            // - FormData を使って簡易に値を取得しますが、チェックボックスが unchecked の場合は FormData に含まれないため
+            //   明示的にチェックボックスの状態を追加しています。
+            // - ラジオボタン群は name 属性でまとめて扱い、選択済みの値を格納します（未選択時は null）。
+            function collectSettings() {
+              const data = {};
+              // FormData で取得可能な値をまずコピー
+              new FormData(form).forEach((v,k) => { data[k] = v; });
+              // チェックボックス（オフのときにも値を保持するため個別に取得）
+              ['add','subtract','multiply','divide','power','fraction','decimal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.type === 'checkbox') data[id] = el.checked;
+              });
+              // ラジオ群の現在値を取得（存在しない場合は null を入れる）
+              ['opAType','opBType','opCType','decAType','decBType','decCType'].forEach(name => {
+                const r = document.querySelector(`input[name="${name}"]:checked`);
+                data[name] = r ? r.value : null;
+              });
+              return data;
+            }
+
+            // 設定オブジェクトをフォームに反映するユーティリティ
+            // - セーブした JSON を読み込み、該当するフォームコントロールに値を復元します。
+            // - checkbox の場合は checked を復元し、ラジオ群は name と value を使って該当要素をチェックします。
+            // - 最後に change イベントを発火させて UI の表示を更新します（連動して隠れる/表示される要素があるため）。
+            function applySettings(obj) {
+              if (!obj) return;
+              Object.keys(obj).forEach(k => {
+                const el = document.getElementById(k);
+                if (el) {
+                  if (el.type === 'checkbox') el.checked = !!obj[k];
+                  else if (el.tagName === 'SELECT' || el.tagName === 'INPUT') el.value = obj[k];
+                } else {
+                  // radio groups
+                  if (obj[k] !== null && typeof obj[k] === 'string') {
+                    const r = document.querySelector(`input[name="${k}"][value="${obj[k]}"]`);
+                    if (r) r.checked = true;
+                  }
+                }
+              });
+              // dispatch change to update UI
+              document.querySelectorAll('select,input').forEach(el => el.dispatchEvent(new Event('change')));
+            }
+
+            // Saved settings list helpers
+            function loadSavedList() {
+              try {
+                const raw = localStorage.getItem(STORAGE_LIST_KEY);
+                return raw ? JSON.parse(raw) : {};
+              } catch (e) { console.error('loadSavedList', e); return {}; }
+            }
+            function saveSavedList(listObj) {
+              localStorage.setItem(STORAGE_LIST_KEY, JSON.stringify(listObj));
+            }
+
+            // UI: populate saved settings select
+            function refreshSavedListUI() {
+              const sel = document.getElementById('savedSettingsList');
+              if (!sel) return;
+              const list = loadSavedList();
+              // clear except first placeholder
+              sel.options.length = 1;
+              Object.keys(list).forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                sel.appendChild(opt);
+              });
+            }
+
+            // Save new named settings
+            // - ユーザーが入力した名前で現在のフォーム設定を localStorage に保存します。
+            // - 同名が存在する場合は上書きされます（必要であれば確認ダイアログを追加可能）。
+            saveBtn && saveBtn.addEventListener('click', function(){
+              const nameInput = document.getElementById('saveName');
+              const name = nameInput && nameInput.value.trim();
+              if (!name) { alert('保存名を入力してください。'); if (nameInput) nameInput.focus(); return; }
+              const settings = collectSettings();
+              const list = loadSavedList();
+              list[name] = settings;
+              try {
+                saveSavedList(list);
+                refreshSavedListUI();
+                // 保存名入力欄をクリアしてフォーカスを外す
+                if (nameInput) { nameInput.value = ''; nameInput.blur(); }
+                alert('設定を保存しました: ' + name);
+              }
+              catch(e){ console.error(e); alert('保存に失敗しました。'); }
+            });
+
+            // Load selected named settings
+            // - 選択した名前の設定を localStorage から復元し、フォームに反映します。
+            // - 読み込み後はプレビューを更新して、画面上の反映を確認できるようにしています。
+            loadBtn && loadBtn.addEventListener('click', function(){
+              const sel = document.getElementById('savedSettingsList');
+              if (!sel) return;
+              const name = sel.value;
+              if (!name) { alert('読み込む設定をリストから選択してください。'); return; }
+              const list = loadSavedList();
+              if (!list[name]) { alert('選択した設定が見つかりません。'); refreshSavedListUI(); return; }
+              try { applySettings(list[name]); alert('設定を読み込みました: ' + name); try { generatePreview(); } catch(e){} }
+              catch(e){ console.error(e); alert('読み込みに失敗しました。'); }
+            });
+
+            // Delete selected named settings
+            // - 選択した保存設定を localStorage から削除します（確認ダイアログ付き）。
+            const deleteBtn = document.getElementById('deleteSetting');
+            deleteBtn && deleteBtn.addEventListener('click', function(){
+              const sel = document.getElementById('savedSettingsList');
+              if (!sel) return;
+              const name = sel.value;
+              if (!name) { alert('削除する設定をリストから選択してください。'); return; }
+              if (!confirm('設定 "' + name + '" を削除しますか？')) return;
+              const list = loadSavedList();
+              if (list[name]) delete list[name];
+              try { saveSavedList(list); refreshSavedListUI(); alert('削除しました: ' + name); try { generatePreview(); } catch(e){} }
+              catch(e){ console.error(e); alert('削除に失敗しました。'); }
+            });
+
+            resetBtn && resetBtn.addEventListener('click', function(){
+              if (!confirm('設定をデフォルトにリセットしますか？')) return;
+              form.reset();
+              // trigger change events
+              document.querySelectorAll('select,input').forEach(el => el.dispatchEvent(new Event('change')));
+              try { if (typeof updatePrintButtons === 'function') updatePrintButtons(); } catch(e){}
+            });
+
+            // live preview: generate a single sample question using current form values
+            function generatePreview() {
+              try {
+                const previewCount = parseInt(document.getElementById('previewCount').value) || 3;
+          // Backup original areas
+            // プレビュー生成は一時的に DOM を変更するため、影響を元に戻すためのバックアップを取ります。
+            // ここでは問題エリア・回答エリア・途中式エリアの内容を保存しておき、プレビュー後に復元します。
+            const origPrint = document.getElementById('printArea').innerHTML;
+            const origAnswer = document.getElementById('answerArea').innerHTML;
+                const detailedEl = document.getElementById('detailedAnswerArea');
+                const origDetailed = detailedEl ? detailedEl.innerHTML : null;
+                // Generate previewCount questions temporarily
+                // 注意: generateQuestions は #detailedAnswerArea に途中式を追加するので
+                // プレビュー時には detailedArea を復元することで画面の途中式表示への影響を防ぎます。
+                generateQuestions(previewCount);
+                const questions = Array.from(document.getElementById('printArea').querySelectorAll('.question'));
+                const answers = Array.from(document.getElementById('answerArea').querySelectorAll('.answer'));
+                previewContent.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'preview-grid';
+                for (let i = 0; i < previewCount; i++) {
+                  const item = document.createElement('div');
+                  item.className = 'preview-item';
+                  const qaLeft = document.createElement('div');
+                  qaLeft.className = 'preview-qa';
+                  const qaRight = document.createElement('div');
+                  qaRight.className = 'preview-qa';
+                  const q = questions[i] ? questions[i].cloneNode(true) : document.createElement('div');
+                  const a = answers[i] ? answers[i].cloneNode(true) : document.createElement('div');
+                  qaLeft.appendChild(q);
+                  qaRight.appendChild(a);
+                  item.appendChild(qaLeft);
+                  item.appendChild(qaRight);
+                  grid.appendChild(item);
+                }
+                previewContent.appendChild(grid);
+                // restore
+                // 生成中に DOM を書き換えた箇所を元に戻します（プレビュー専用の一時変更を取り除く）。
+                document.getElementById('printArea').innerHTML = origPrint;
+                document.getElementById('answerArea').innerHTML = origAnswer;
+                if (detailedEl && origDetailed !== null) detailedEl.innerHTML = origDetailed;
+                // プレビューのために一時生成した問題の影響を排除するため印刷ボタン状態を再評価
+                try { if (typeof updatePrintButtons === 'function') updatePrintButtons(); } catch(e){}
+              } catch (e) {
+                console.error('preview error', e);
+                previewContent.textContent = 'プレビューの生成中にエラーが発生しました。コンソールを確認してください。';
+              }
+            }
+
+            previewBtn && previewBtn.addEventListener('click', generatePreview);
+
+      // auto-update preview on form changes (debounced)
+            // but ignore inputs that belong to the save/load UI to avoid
+            // regenerating preview while the user edits save name or clicks save/delete
+            let previewTimer = null;
+            const previewIgnoreIds = ['saveName','savedSettingsList','saveSettings','loadSettings','deleteSetting','resetSettings','previewBtn'];
+      form.addEventListener('input', function(e){
+              try {
+                const t = e && e.target;
+        if (t && t.id && previewIgnoreIds.includes(t.id)) return;
+        // mark that there are unapplied changes until user presses 問題を生成
+        markPending();
+        // Proactive guard: prevent the user from leaving only 'power' checked.
+        // If 'power' becomes the sole checked operation, auto-enable 'add'
+        // to ensure there's always a primary binary operation selected.
+        try {
+          const opIds = ['add','subtract','multiply','divide','power'];
+          const checked = opIds.filter(id => {
+            const el = document.getElementById(id);
+            return el && el.checked;
+          });
+          const operandCountEl = document.getElementById('operandCount');
+          const currentOperandCount = operandCountEl ? parseInt(operandCountEl.value || '2') : 2;
+          // If power is the only checked operation and operandCount !== 1, disallow it
+          if (checked.length === 1 && checked[0] === 'power' && currentOperandCount !== 1) {
+            const powerEl = document.getElementById('power');
+            if (powerEl) powerEl.checked = false;
+            alert('「累乗」は単独では選択できません。他の演算（加法・減法・乗法・除法）のいずれかを選択してください。\n(1項を選択した場合は累乗単独の出題が可能です)');
+          }
+        } catch(err) {
+          /* non-critical */
+          console.warn('operation-guard error', err);
+        }
+              } catch (e) { /* ignore */ }
+              if (previewTimer) clearTimeout(previewTimer);
+              previewTimer = setTimeout(generatePreview, 300);
+            });
+
+            // keyboard shortcut: press 'g' to generate full set
+            document.addEventListener('keydown', function(e){
+              if (e.key === 'g' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                const count = parseInt(document.getElementById('questionCount').value) || 15;
+                generateQuestions(count);
+              }
+            });
+
+            // initial preview
+              setTimeout(generatePreview, 200);
+              // populate saved settings list on load
+              setTimeout(refreshSavedListUI, 250);
+            })();
+          });
+        </script>
+        <script>
+          // operandCount が 1 のとき、自動的に「累乗」だけをチェックする
+          document.addEventListener('DOMContentLoaded', function(){
+            const operandSelect = document.getElementById('operandCount');
+            const opIds = ['add','subtract','multiply','divide','power'];
+            function syncOperandCountToPower() {
+              if (!operandSelect) return;
+              const v = parseInt(operandSelect.value || '2');
+              if (v === 1) {
+                opIds.forEach(id => {
+                  const el = document.getElementById(id);
+                  if (!el) return;
+                  el.checked = (id === 'power');
+                });
+              }
+            }
+            if (operandSelect) {
+              operandSelect.addEventListener('change', syncOperandCountToPower);
+              // 初期同期
+              syncOperandCountToPower();
+            }
+          });
+        </script>
+    <!-- 小数選択時のみ正負選択エリアを表示 -->
+    <script>
+      // 小数選択時のみ正負選択エリアを表示
+      document.addEventListener("DOMContentLoaded", function () {
+        const rationalType = document.getElementById("rationalType");
+        const decimalSignArea = document.getElementById("decimalSignArea");
+        function toggleDecimalSignArea() {
+          decimalSignArea.style.display = rationalType.value === "decimal" ? "block" : "none";
+        }
+        rationalType.addEventListener("change", toggleDecimalSignArea);
+        toggleDecimalSignArea();
+      });
+    </script>
+    <!-- 小数選択時のみ正負組み合わせ選択エリアを表示 -->
+    <script>
+      // 小数選択時のみ正負組み合わせ選択エリアを表示
+      document.addEventListener("DOMContentLoaded", function () {
+        const rationalType = document.getElementById("rationalType");
+        const decimalSignComboArea = document.getElementById("decimalSignComboArea");
+        function toggleDecimalSignComboArea() {
+          decimalSignComboArea.style.display = rationalType.value === "decimal" ? "block" : "none";
+        }
+        rationalType.addEventListener("change", toggleDecimalSignComboArea);
+        toggleDecimalSignComboArea();
+      });
+    </script>
+  </head>
+
+  <style>
+    /* UD デジタル教科書体を優先して使用する設定。
+       フォントファイルはライセンスが必要なため同梱していません。
+       - システムにフォントをインストールしている場合は local() で検出されます。
+       - ライセンスを保有している場合は WOFF/WOFF2 を自己ホストし、下記の src 行を有効化してください。
+    */
+    @font-face {
+      font-family: 'UD Digital Kyokasho';
+      font-style: normal;
+      font-weight: 400;
+      /* try local names first (common local names) */
+      src: local('UD デジタル教科書体 NK-R'), local('UD Digital Kyokasho NK-R'), local('UD Digital Kyokasho');
+      /* Example self-hosting (uncomment and provide files under ./fonts/):
+      src: url('./fonts/UDDigiKyokasho.woff2') format('woff2'),
+           url('./fonts/UDDigiKyokasho.woff') format('woff');
+      font-display: swap;
+      */
+    }
+    /* Apply site-wide font stack preferring UD font, then common JP fonts */
+    body, input, select, textarea, button {
+      font-family: 'UD Digital Kyokasho', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', 'Meiryo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+
+  <body>
+    <!-- ハンバーガーメニュー -->
+    <div id="menu">
+      <div id="menu-icon" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div id="menu-items">
+  <a href="#" id="menuHome">ホーム</a><br />
+        <a href="#">マイページ</a><br />
+        <a href="#">設定</a><br />
+        <a href="#">お知らせ</a><br />
+        <a href="#">サポート</a><br />
+        <!-- イントロ／使い方をメニュー内で開く -->
+        <a href="#" id="openIntroFromMenu">使い方（イントロ）</a>
+      </div>
+    </div>
+    <!-- メインコンテンツ枠 -->
+    <div id="main-container">
+      <h1>計算問題プリント作成</h1>
+      <!-- タイトル -->
+      <!-- 問題生成フォーム -->
+      <form
+        onsubmit="event.preventDefault(); generateQuestions(document.getElementById('questionCount').value);"
+        id="mainForm"
+      >
+        <!-- タイトル入力エリア -->
+        <div class="form-step" data-step="1">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset style="flex:1;">
+          <legend>プリントタイトル</legend>
+          <label for="printTitle">プリントのタイトル：</label>
+          <input type="text" id="printTitle" name="printTitle" maxlength="40" style="width: 60%;" placeholder="例：小数の計算プリント" />
+            </fieldset>
+          </div>
+  </div>
+
+  <!-- プレビュー下の問題生成ボタン（位置移動のため一旦削除） -->
+        <!-- 問題数入力エリア -->
+        <div class="form-step" data-step="2">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset style="flex:1;">
+          <legend>問題数</legend>
+          <label for="questionCount">問題数を入力してください：</label>
+          <input
+            type="number"
+            id="questionCount"
+            name="questionCount"
+            min="1"
+            max="75"
+            value="15"
+            required
+          />
+          <span id="questionCountNote"
+            >(15問ごとに改行されます。最大75問まで)</span
+          >
+            </fieldset>
+          </div>
+  </div>
+        <!-- 項数選択（2項式 or 3項式） -->
+        <div class="form-step" data-step="3">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset style="flex:1;">
+          <legend>項数</legend>
+          <label for="operandCount">項数を選択してください：</label>
+          <select id="operandCount" name="operandCount">
+            <option value="1">１項（累乗専用）</option>
+            <option value="2" selected>２項（例：●●＋●●）</option>
+            <option value="3">３項（例：●●＋●●＋●●）</option>
+          </select>
+            </fieldset>
+          </div>
+  </div>
+        <!-- 有理数の種類選択エリア -->
+        <div class="form-step" data-step="4">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset style="flex:1;">
+          <legend>有理数の種類</legend>
+          <label for="rationalType">有理数の種類を選択してください：</label>
+          <select id="rationalType" name="rationalType">
+            <option value="positive" selected>正数</option>
+            <option value="negative">負数</option>
+            <option value="posneg">整数</option>
+            <option value="decimal">小数</option>
+            <option value="fraction">分数</option>
+          </select>
+          <!-- 整数選択時のみ表示される組み合わせ選択エリア（新UI） -->
+          <div id="posnegOptionArea" style="display: none; margin-top: 10px; margin-bottom: 8px">
+            <fieldset style="border: 1.2px solid #b0b0b0; border-radius: 7px; background: #f5f7fa; padding: 8px 12px 8px 12px; margin-bottom: 0;">
+              <legend style="color: #1976d2; font-size: 1em">
+                整数の組み合わせ
+              </legend>
+              <div>
+                <span>被演算子①：</span>
+                <input
+                  type="radio"
+                  id="opApos"
+                  name="opAType"
+                  value="positive"
+                  checked
+                />
+                <label for="opApos">正数</label>
+                <input
+                  type="radio"
+                  id="opAneg"
+                  name="opAType"
+                  value="negative"
+                />
+                <label for="opAneg">負数</label>
+                <input
+                  type="radio"
+                  id="opArand"
+                  name="opAType"
+                  value="random"
+                />
+                <label for="opArand">ランダム</label>
+              </div>
+              <div>
+                <span>被演算子②：</span>
+                <input
+                  type="radio"
+                  id="opBpos"
+                  name="opBType"
+                  value="positive"
+                  checked
+                />
+                <label for="opBpos">正数</label>
+                <input
+                  type="radio"
+                  id="opBneg"
+                  name="opBType"
+                  value="negative"
+                />
+                <label for="opBneg">負数</label>
+                <input
+                  type="radio"
+                  id="opBrand"
+                  name="opBType"
+                  value="random"
+                />
+                <label for="opBrand">ランダム</label>
+              </div>
+                <!-- 第3項用のラジオ（3項式時に使用） -->
+                <div>
+                  <span>被演算子③：</span>
+                  <input type="radio" id="opCpos" name="opCType" value="positive" checked>
+                  <label for="opCpos">正数</label>
+                  <input type="radio" id="opCneg" name="opCType" value="negative">
+                  <label for="opCneg">負数</label>
+                  <input type="radio" id="opCrand" name="opCType" value="random">
+                  <label for="opCrand">ランダム</label>
+                </div>
+              </div>
+                </fieldset>
+          </div>
+          <!-- 小数選択時のみ表示される符号組み合わせエリア -->
+          <div id="decimalSignComboArea" style="display: none; margin-top: 10px; margin-bottom: 8px">
+            <fieldset style="border: 1.2px solid #b0b0b0; border-radius: 7px; background: #f5f7fa; padding: 8px 12px 8px 12px; margin-bottom: 0;">
+              <legend style="color: #1976d2; font-size: 1em">小数の符号の組み合わせ</legend>
+              <div>
+                <span>被演算子①：</span>
+                <input type="radio" id="decApos" name="decAType" value="positive" checked>
+                <label for="decApos">正数</label>
+                <input type="radio" id="decAneg" name="decAType" value="negative">
+                <label for="decAneg">負数</label>
+                <input type="radio" id="decArand" name="decAType" value="random">
+                <label for="decArand">ランダム</label>
+              </div>
+              <div>
+                <span>被演算子②：</span>
+                <input type="radio" id="decBpos" name="decBType" value="positive" checked>
+                <label for="decBpos">正数</label>
+                <input type="radio" id="decBneg" name="decBType" value="negative">
+                <label for="decBneg">負数</label>
+                <input type="radio" id="decBrand" name="decBType" value="random">
+                <label for="decBrand">ランダム</label>
+              </div>
+              <div>
+                <span>被演算子③：</span>
+                <input type="radio" id="decCpos" name="decCType" value="positive" checked>
+                <label for="decCpos">正数</label>
+                <input type="radio" id="decCneg" name="decCType" value="negative">
+                <label for="decCneg">負数</label>
+                <input type="radio" id="decCrand" name="decCType" value="random">
+                <label for="decCrand">ランダム</label>
+              </div>
+            </fieldset>
+          </div>
+  </fieldset>
+  </div>
+        <!-- 演算の種類選択エリア -->
+        <div class="form-step" data-step="5">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset style="flex:1;">
+          <legend>演算の種類</legend>
+          <label for="add">演算の種類を選択してください（複数選択可）：</label
+          ><br />
+          <input
+            type="checkbox"
+            id="add"
+            name="operation"
+            value="add"
+            checked
+          />
+          <label for="add">加法（足し算）</label><br />
+          <input
+            type="checkbox"
+            id="subtract"
+            name="operation"
+            value="subtract"
+          />
+          <label for="subtract">減法（引き算）</label><br />
+          <input
+            type="checkbox"
+            id="multiply"
+            name="operation"
+            value="multiply"
+          />
+          <label for="multiply">乗法（掛け算）</label><br />
+          <input type="checkbox" id="divide" name="operation" value="divide" />
+          <label for="divide">除法（割り算）</label><br />
+          <input type="checkbox" id="power" name="operation" value="power" />
+          <label for="power">累乗（べき乗）</label><br />
+            </fieldset>
+          </div>
+  </div>
+        <!-- 分数の桁数選択エリア（分数時のみ表示） -->
+        <div class="form-step" data-step="6">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset
+          id="fractionDigitsArea"
+          style="display: none; margin-bottom: 0"
+        >
+          <legend>分数の桁数選択</legend>
+          <label for="numerator1Digits">被演算子の分子：</label>
+          <select id="numerator1Digits">
+            <option value="1">1桁</option>
+            <option value="2">2桁</option>
+            <option value="3">3桁</option>
+          </select>
+          <label for="denominator1Digits">分母：</label>
+          <select id="denominator1Digits">
+            <option value="1">1桁</option>
+            <option value="2">2桁</option>
+            <option value="3">3桁</option>
+          </select>
+          <br />
+          <label for="numerator2Digits">演算子の分子：</label>
+          <select id="numerator2Digits">
+            <option value="1">1桁</option>
+            <option value="2">2桁</option>
+            <option value="3">3桁</option>
+          </select>
+          <label for="denominator2Digits">分母：</label>
+          <select id="denominator2Digits">
+            <option value="1">1桁</option>
+            <option value="2">2桁</option>
+            <option value="3">3桁</option>
+          </select>
+          <br />
+          <!-- 第3項用（3項式選択時に使用） -->
+          <label for="numerator3Digits">第3項の分子：</label>
+          <select id="numerator3Digits">
+            <option value="1">1桁</option>
+            <option value="2">2桁</option>
+            <option value="3">3桁</option>
+          </select>
+          <label for="denominator3Digits">分母：</label>
+          <select id="denominator3Digits">
+            <option value="1">1桁</option>
+            <option value="2">2桁</option>
+            <option value="3">3桁</option>
+          </select>
+          <br />
+          <!-- 分数の累乗適用先オプション（分数選択時のみ表示） -->
+          <label for="fractionPowerMode">累乗の適用先：</label>
+          <select id="fractionPowerMode" title="分数に対する累乗の適用先を選択してください">
+            <option value="whole">分数全体に適用 ( (a/b)^n )</option>
+            <option value="numerator">分子だけに適用 ( a^n / b )</option>
+            <option value="denominator">分母だけに適用 ( a / b^n )</option>
+          </select>
+            </fieldset>
+          </div>
+  </div>
+        <!-- 通常の桁数選択エリア（分数以外） -->
+        <div class="form-step" data-step="7">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <fieldset id="normalDigitsArea" style="flex:1;">
+          <legend>桁数選択</legend>
+          <!-- 通常（小数以外）の桁数選択エリア -->
+          <div id="digitsRowNormal">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <label for="digitCountA">被演算子：</label>
+              <select id="digitCountA" name="digitCountA">
+                <option value="1">1桁</option>
+                <option value="2">2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+              ＋
+              <label for="digitCountB">演算子：</label>
+              <select id="digitCountB" name="digitCountB">
+                <option value="1">1桁</option>
+                <option value="2">2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+            </div>
+            <div style="margin-top:8px; display:flex;align-items:center;gap:8px;">
+              ＋
+              <label for="digitCountC">演算子2（3項時のみ）：</label>
+              <select id="digitCountC" name="digitCountC">
+                <option value="1">1桁</option>
+                <option value="2">2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+            </div>
+            <div style="margin-top:6px;">
+              両方（3項時は3つ）の桁数を選択して下さい
+            </div>
+          </div>
+          <!-- 小数選択時のみ表示する桁数＋小数点以下の行分けエリア -->
+          <div id="digitsRowDecimal" style="display: none">
+            <div style="margin-bottom: 8px">
+              <span style="font-weight: 600; color: #1976d2">被演算子：</span>
+              <label for="digitCountA_decimal">桁数</label>
+              <select id="digitCountA_decimal" name="digitCountA_decimal">
+                <option value="1">1桁</option>
+                <option value="2">2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+              <span style="margin-left: 12px"></span>
+              <label for="decimalDigitsA">小数点以下</label>
+              <select id="decimalDigitsA" name="decimalDigitsA">
+                <option value="1">1桁</option>
+                <option value="2" selected>2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+            </div>
+            <div>
+              <span style="font-weight: 600; color: #1976d2">演算子：</span>
+              <label for="digitCountB_decimal">桁数</label>
+              <select id="digitCountB_decimal" name="digitCountB_decimal">
+                <option value="1">1桁</option>
+                <option value="2">2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+              <span style="margin-left: 12px"></span>
+              <label for="decimalDigitsB">小数点以下</label>
+              <select id="decimalDigitsB" name="decimalDigitsB">
+                <option value="1">1桁</option>
+                <option value="2" selected>2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+              <span style="margin-left: 18px"></span>
+              <label for="digitCountC_decimal">桁数（3項目）</label>
+              <select id="digitCountC_decimal" name="digitCountC_decimal">
+                <option value="1">1桁</option>
+                <option value="2">2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+              <span style="margin-left: 12px"></span>
+              <label for="decimalDigitsC">小数点以下（3項目）</label>
+              <select id="decimalDigitsC" name="decimalDigitsC">
+                <option value="1">1桁</option>
+                <option value="2" selected>2桁</option>
+                <option value="3">3桁</option>
+                <option value="4">4桁</option>
+              </select>
+            </div>
+            <span style="margin-top: 8px; display: block; color: #333">桁数・小数点以下を選択してください</span>
+          </div>
+            </fieldset>
+            <!-- 最終ステップには次へボタンを表示しない -->
+          </div>
+  </div>
+  <br />
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;padding:6px 0;">
+    <label for="saveName" style="margin-left:8px;">保存名：</label>
+    <input type="text" id="saveName" placeholder="例: 小数プリント" style="margin-left:6px;min-width:160px;" />
+    <button type="button" id="saveSettings">設定を保存</button>
+    <select id="savedSettingsList" style="margin-left:8px;min-width:180px;"><option value="">-- 保存済み設定を選択 --</option></select>
+    <button type="button" id="loadSettings">読み込み</button>
+    <button type="button" id="deleteSetting">削除</button>
+    <button type="button" id="resetSettings">リセット</button>
+    <button type="button" id="previewBtn">プレビュー更新</button>
+  </div>
+      </form>
+    
+      <!-- イントロ／使い方モーダル（初回表示はしない、メニューから開く） -->
+      <div id="introModal" style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:10010;">
+        <div style="background:#fff; max-width:820px; width:92%; padding:20px 22px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.2);">
+          <h2 style="margin-top:0; color:#1976d2;">使い方・イントロダクション</h2>
+          <div style="max-height:60vh; overflow:auto; color:#333; line-height:1.6;">
+            <p>このツールは計算問題のプリントを手早く作成するためのツールです。フォームで設定を行い、「問題を生成」でプレビューと印刷用の問題を作成できます。</p>
+            <ul>
+              <li>問題数・桁数・有理数の種類などを選択してください。</li>
+              <li>保存ボタンで設定を名前を付けて保存できます。保存した設定はメニューから読み込み可能です。</li>
+              <li>問題を生成して印刷ボタンでPDF出力できます。</li>
+            </ul>
+            <p>必要があればここに詳しい使い方を追記してください。</p>
+          </div>
+          <div style="text-align:right; margin-top:12px;">
+            <button type="button" onclick="document.getElementById('introModal').style.display='none'" style="padding:8px 12px; border-radius:8px; border:1px solid #1976d2; background:#1976d2; color:#fff; box-shadow:0 4px 10px rgba(25,118,210,0.15);">閉じる</button>
+          </div>
+        </div>
+      </div>
+
+      
+  <!-- ライブプレビュー -->
+      <div id="previewArea" style="border-radius:8px;padding:12px;margin:12px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>プレビュー</strong>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <label for="previewCount">表示サンプル数:</label>
+            <select id="previewCount">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        <div id="previewContent" style="margin-top:8px;font-size:1.05em;color:#111">ここに設定に基づく問題のサンプルが表示されます。</div>
+  </div>
+
+  <!-- プレビューと問題表示の間の問題生成ボタン -->
+  <div style="margin:10px 0 18px 0;text-align:left;">
+    <button type="button" onclick="document.getElementById('mainForm').requestSubmit ? document.getElementById('mainForm').requestSubmit() : document.getElementById('mainForm').submit();">問題を生成</button>
+  </div>
+
+      <h2>問題</h2>
+      <!-- タイトル表示エリア（枠外） -->
+      <div id="printTitleDisplay" style="font-size:1.4em;font-weight:bold;color:#1976d2;margin-bottom:12px;"></div>
+      <!-- 問題表示エリア -->
+      <div id="printArea">
+        <div id="printTitleInArea" style="font-size:1.4em;font-weight:bold;color:#1976d2;margin-bottom:12px;"></div>
+        <!-- ここに計算問題が表示されます -->
+      </div>
+  <button class="printButton" onclick="printQuestions()" disabled>問題を印刷</button>
+  <button class="printButton" onclick="downloadAsPDF('printArea','問題プリント.pdf')" disabled title="ワンクリックでPDFを生成してダウンロードします">PDFで保存</button>
+  
+      <h2>回答</h2>
+      <!-- タイトル表示エリア（枠外） -->
+      <div id="answerTitleDisplay" style="font-size:1.4em;font-weight:bold;color:#1976d2;margin-bottom:12px;"></div>
+      <!-- 回答表示エリア -->
+      <div id="answerArea">
+        <div id="answerTitleInArea" style="font-size:1.4em;font-weight:bold;color:#1976d2;margin-bottom:12px;"></div>
+        <!-- ここに回答が表示されます -->
+      </div>
+  <button class="printButton" onclick="printAnswers()" disabled>回答を印刷</button>
+  <button class="printButton" onclick="downloadAsPDF('answerArea','回答プリント.pdf')" disabled title="ワンクリックでPDFを生成してダウンロードします">PDFで保存</button>
+  
+  <h2>途中式入りの回答（印刷/PDF用）</h2>
+  <div id="detailedAnswerArea">
+    <!-- ここに途中式入りの回答が表示されます -->
+  </div>
+  <button class="printButton" onclick="printTargetArea('detailedAnswerArea')" disabled>途中式入りを印刷</button>
+  <button class="printButton" onclick="downloadAsPDF('detailedAnswerArea','途中式付き回答.pdf')" disabled>PDFで保存（途中式付き）</button>
+    </div>
+    <!-- 印刷・PDF保存ボタン用のコード（新バージョン） -->
+    <script>
+      // 印刷ボタン用のコードを修正
+      // 問題・回答の印刷ボタン用関数
+      function printQuestions() {
+  if (window.pendingApply) { alert('フォームに未適用の変更があります。先に「問題を生成」ボタンを押してから印刷またはPDF保存を行ってください。'); return; }
+  if (!document.querySelector('#printArea .question')) { alert('問題が生成されていません。'); return; }
+  printTargetArea("printArea");
+      }
+      function printAnswers() {
+  if (window.pendingApply) { alert('フォームに未適用の変更があります。先に「問題を生成」ボタンを押してから印刷またはPDF保存を行ってください。'); return; }
+  if (!document.querySelector('#answerArea .answer')) { alert('回答が生成されていません。'); return; }
+  printTargetArea("answerArea");
+      }
+  // PDF保存機能はすべて廃止されました（saveQuestionsPDF / saveAnswersPDF / saveAreaToPDF の削除）
+      /**
+       * 指定したエリアのみを印刷するユーティリティ
+       * - 画面上の他の要素は非表示にし、印刷対象のエリアにだけ印刷専用クラスを付与します。
+       * - afterprint イベントでクラスを取り除き、画面状態を復元します。
+       * @param {string} elementId - 印刷対象のエレメント ID
+       */
+      function printTargetArea(elementId) {
+        // すべての印刷用クラスを一度外す（安全のため）
+        document
+          .querySelectorAll(".printing-area")
+          .forEach((el) => el.classList.remove("printing-area"));
+        document.getElementById("main-container").classList.remove("printing");
+        // 指定エリアだけ印刷用クラスを付与
+        const main = document.getElementById("main-container");
+        const target = document.getElementById(elementId);
+        main.classList.add("printing");
+        target.classList.add("printing-area");
+        // 印刷後にクラスを外す（クリーンアップ）
+        const removePrintingClass = function () {
+          main.classList.remove("printing");
+          target.classList.remove("printing-area");
+          window.removeEventListener("afterprint", removePrintingClass);
+        };
+        window.addEventListener("afterprint", removePrintingClass);
+        // ブラウザの print ダイアログを開く
+        window.print();
+      }
+  // 印刷ダイアログ経由のPDF保存機能は廃止されました
+      // ワンクリックで指定エリアをPDFに変換して自動ダウンロードする関数（html2pdf を使用）
+  /**
+   * 指定エリアを PDF に変換して自動ダウンロードするユーティリティ
+   * 内部で html2pdf (html2canvas + jsPDF) を使い、ページに一時スタイルを注入して
+   * 印刷時の見た目を再現します。複数のスケールを試行して可能な限り1ページに収めます。
+   * 重要: 操作中は `.printButton` を無効化して多重実行を防ぎます。
+   * @param {string} elementId - PDF 化するエリアの ID
+   * @param {string} filename - ダウンロードするファイル名
+   */
+  function downloadAsPDF(elementId, filename) {
+        const area = document.getElementById(elementId);
+        try {
+          if (window.pendingApply) { alert('フォームに未適用の変更があります。先に「問題を生成」ボタンを押してから印刷またはPDF保存を行ってください。'); return; }
+          if (!area) { alert('指定されたエリアが見つかりません。'); return; }
+          if (elementId === 'printArea' && !area.querySelector('.question')) { alert('問題が生成されていません。'); return; }
+          if (elementId === 'answerArea' && !area.querySelector('.answer')) { alert('回答が生成されていません。'); return; }
+          if (elementId === 'detailedAnswerArea' && !area.querySelector('.detailed-answer')) { alert('途中式入りの回答が生成されていません。'); return; }
+          // disable buttons to prevent duplicate clicks
+          document.querySelectorAll('.printButton').forEach(b => b.disabled = true);
+
+          // 一時的に印刷用クラスを付与して、黒枠を非表示にするスタイルを適用
+          const main = document.getElementById('main-container');
+          main.classList.add('printing');
+          area.classList.add('printing-area');
+          // Add temporary override to hide borders for PDF rendering and avoid page breaks
+          // 一時的に注入するスタイルは、画面上の他要素を隠しつつ印刷対象だけを整形する役割を持ちます。
+          // html2pdf でレンダリングする際に clone を作るため、クラス／スタイルを局所的に変えるのが安定動作の秘訣です。
+          const tempStyle = document.createElement('style');
+          tempStyle.id = 'pdf-temp-style';
+          // inject print CSS matching @media print rules defined earlier in the document
+          // Slightly reduce font-size and padding for PDF rendering and tighten margins
+          tempStyle.innerHTML = `
+            @page { size: A4 landscape; margin: 0; }
+            html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+            /* Target the printing-area and ensure it and its descendants are visible. */
+            #main-container.printing, .printing-area, #printArea, #answerArea, #detailedAnswerArea {
+              max-width: none !important;
+              margin: 0 auto !important;
+              background: none !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+              padding: 0 !important;
+            }
+            .printing-area {
+              display: flex !important;
+              flex-wrap: wrap !important;
+              align-items: flex-start !important;
+              width: 97% !important;
+              margin: auto !important;
+              border: 2px solid #000 !important;
+              border-radius: 10px !important;
+              background: #f9f9f9 !important;
+              padding: 6px !important;
+              box-sizing: border-box !important;
+              position: relative !important;
+              page-break-after: avoid !important;
+              page-break-before: avoid !important;
+              visibility: visible !important;
+              font-size: 0.95em !important;
+            }
+            .printing-area * { visibility: visible !important; }
+            .printing-area .column { display: flex !important; flex-direction: column !important; width: 19.4% !important; box-sizing: border-box !important; }
+            .printing-area .question, .printing-area .answer { display: flex !important; align-items: center !important; }
+            .printing-area .fraction { display: inline-block !important; }
+            .printing-area .fraction .numerator, .printing-area .fraction .denominator { display:block !important; }
+            .printing-area .fraction .fraction-bar { display:block !important; }
+            /* detailed answer styling for printable area */
+            .detailed-answer { box-sizing: border-box; border-bottom: 1px dashed #ccc; padding: 6px 8px; width: 100%; display: block; page-break-inside: avoid !important; }
+            .detailed-answer .detailed-number { font-weight: 700; display: inline-block; width: 2.4em; }
+            .detailed-answer .detailed-question { display: inline-block; margin-left: 6px; }
+            .detailed-answer .detailed-final { margin-top: 6px; font-weight: 600; }
+            .detailed-answer .detailed-steps { margin-top: 4px; color: #333; font-size: 0.95em; }
+            /* also ensure no extra borders when rendering for PDF */
+            #printArea, #answerArea, #detailedAnswerArea, .printing-area { border: none !important; box-shadow: none !important; background: #fff !important; }
+            /* avoid breaking a single question across pages */
+            .printing-area .question, .printing-area .answer { page-break-inside: avoid !important; }
+          `;
+          document.head.appendChild(tempStyle);
+
+          const opt = {
+            margin:       6,
+            filename:     filename || 'export.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false, allowTaint: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+            pagebreak:    { mode: ['css', 'legacy'] }
+          };
+
+          // Try multiple scales to make the rendered content fit in 1 A4 page if possible
+          (async function(){
+            const scales = [2, 1.7, 1.5, 1.3, 1.1, 1.0, 0.95, 0.90, 0.85];
+            let finalPdf = null;
+            for (let s of scales) {
+              try {
+                opt.html2canvas.scale = s;
+                const pdf = await window.html2pdf().set(opt).from(area).toPdf().get('pdf');
+                const pages = pdf.internal.getNumberOfPages();
+                finalPdf = pdf;
+                if (pages <= 1) break; // good
+                // otherwise try next (smaller) scale
+              } catch (e) {
+                // continue to next scale
+                console.warn('scale try error', e);
+                continue;
+              }
+            }
+            try {
+              if (!finalPdf) throw new Error('PDF生成に失敗しました');
+              const total = finalPdf.internal.getNumberOfPages();
+              // if still multiple pages, attempt simple heuristic to remove an effectively empty last page
+              if (total > 1) {
+                try {
+                  const last = finalPdf.internal.pages[total];
+                  if (!last || (Array.isArray(last) && last.length <= 1)) finalPdf.deletePage(total);
+                } catch (e) {
+                  // ignore
+                }
+              }
+              finalPdf.save(filename || 'export.pdf');
+            } finally {
+              document.querySelectorAll('.printButton').forEach(b => b.disabled = false);
+              if (tempStyle) try { tempStyle.remove(); } catch(e){}
+              if (main) try { main.classList.remove('printing'); } catch(e){}
+              if (area) try { area.classList.remove('printing-area'); } catch(e){}
+            }
+          })().catch(err => {
+            console.error('downloadAsPDF error', err);
+            alert('PDF生成に失敗しました。コンソールを確認してください。');
+            document.querySelectorAll('.printButton').forEach(b => b.disabled = false);
+            if (tempStyle) try { tempStyle.remove(); } catch(e){}
+            if (main) try { main.classList.remove('printing'); } catch(e){}
+            if (area) try { area.classList.remove('printing-area'); } catch(e){}
+          });
+        } catch(e) {
+          console.error(e); alert('PDF生成時にエラーが発生しました');
+          document.querySelectorAll('.printButton').forEach(b => b.disabled = false);
+          try { document.getElementById('pdf-temp-style')?.remove(); } catch(e){}
+          try { document.getElementById('main-container').classList.remove('printing'); } catch(e){}
+          try { area.classList.remove('printing-area'); } catch(e){}
+        }
+      }
+    </script>
+  </body>
+</html>
