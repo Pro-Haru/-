@@ -9,11 +9,97 @@
     <!-- ページタイトル -->
     <!-- 全体のレイアウト・デザインCSS -->
     <style>
+      /* Theme variables (light by default) */
+      :root {
+        --bg-gradient-start: #f5f7fa;
+        --bg-gradient-end: #c3cfe2;
+        --card-bg: #fff;
+        --primary: #1976d2;
+        --text: #0f172a;
+        --muted: #64748b;
+        --surface: #fafbfc;
+      }
+
+      /* Dark theme variables */
+      .theme-dark {
+        --bg-gradient-start: #0f1724;
+        --bg-gradient-end: #07101a;
+        --card-bg: #0b1220;
+        --primary: #4fc3f7;
+        --text: #e6eef8;
+        --muted: #9fb6c9;
+        --surface: #071421;
+      }
+
+      /* Dark-theme visual adjustments for better contrast and readability */
+      .theme-dark select {
+        /* lighter arrow color for dark background */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7l5 6 5-6' fill='none' stroke='%23e6eef8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+      .theme-dark select.open {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13l5-6 5 6' fill='none' stroke='%234fc3f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+      .theme-dark select:hover {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7l5 6 5-6' fill='none' stroke='%234fc3f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+
+      .theme-dark input[type="number"],
+      .theme-dark input[type="text"],
+      .theme-dark textarea,
+      .theme-dark select {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.08);
+        color: var(--text);
+      }
+      .theme-dark input[type="number"]:focus,
+      .theme-dark select:focus,
+      .theme-dark input[type="text"]:focus,
+      .theme-dark textarea:focus {
+        box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
+      }
+
+      .theme-dark button,
+      .theme-dark .printButton {
+        background: linear-gradient(90deg, #0b6b86 60%, #2bb7e8 100%);
+        color: #fff;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+      }
+      .theme-dark button:hover,
+      .theme-dark .printButton:hover {
+        background: linear-gradient(90deg, #06607f 60%, #1b8fb0 100%);
+        box-shadow: 0 6px 22px rgba(0,0,0,0.55);
+      }
+
+      .theme-dark #menu-icon span { background: var(--text); }
+      .theme-dark #menu-items { background: var(--card-bg); color: var(--text); border-color: rgba(255,255,255,0.06); }
+
+      .theme-dark #previewArea { background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%); border-color: rgba(255,255,255,0.04); box-shadow: 0 2px 8px rgba(0,0,0,0.6); color: var(--text); }
+
+      /* Fraction contrast in dark mode */
+      .theme-dark .fraction .fraction-bar { border-top: 2px solid var(--muted); }
+      .theme-dark .fraction .numerator, .theme-dark .fraction .denominator { color: var(--text); }
+
+      /* Ensure select disabled state remains legible */
+      .theme-dark select:disabled { color: var(--muted); background: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.04); }
+
+  /* Override some inline-styled elements to ensure legibility in dark mode */
+  .theme-dark #previewContent { color: var(--text) !important; }
+  .theme-dark #previewArea { color: var(--text); }
+  .theme-dark #introModal > div { background: var(--card-bg) !important; color: var(--text) !important; }
+  .theme-dark #introModal h2 { color: var(--primary) !important; }
+  .theme-dark #introModal button { background: linear-gradient(90deg, #0b6b86 60%, #2bb7e8 100%) !important; color: #fff !important; border-color: rgba(255,255,255,0.06) !important; }
+  .theme-dark .detailed-answer .detailed-steps { color: var(--muted) !important; }
+  .theme-dark .preview-item { background: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.03); }
+  .theme-dark #printTitleDisplay, .theme-dark #answerTitleDisplay, .theme-dark #printTitleInArea, .theme-dark #answerTitleInArea { color: var(--primary) !important; }
+  /* Override inline-colored legends and generic dark text to theme variables */
+  .theme-dark legend, .theme-dark label { color: var(--primary) !important; }
+  .theme-dark div[style*="color:#333"], .theme-dark div[style*="color:#111"] { color: var(--text) !important; }
       /* ページ全体の背景・フォント設定 */
       body {
         font-family: "UDDigiKyokashoN";
         margin: 0;
-        background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: linear-gradient(120deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+        color: var(--text);
         min-height: 100vh;
       }
 
@@ -21,7 +107,7 @@
       #main-container {
         max-width: 1400px;
         margin: 40px auto 32px auto;
-        background: #fff;
+        background: var(--card-bg);
         border-radius: 18px;
         box-shadow: 0 4px 24px rgba(60, 80, 120, 0.13),
           0 1.5px 6px rgba(60, 80, 120, 0.07);
@@ -34,9 +120,9 @@
         margin-top: 0;
         font-size: 2.1em;
         font-weight: 700;
-        color: #1976d2;
+        color: var(--primary);
         letter-spacing: 0.04em;
-        text-shadow: 0 2px 8px #e3eafc;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.08);
         margin-bottom: 18px;
       }
 
@@ -76,7 +162,7 @@
       /* ラベルの文字色・サイズ */
       label {
         font-size: 1em;
-        color: #333;
+        color: var(--text);
       }
 
       /* 数値入力・セレクトボックスのデザイン */
@@ -102,13 +188,13 @@
       }
 
       /* 最新風セレクト（カスタム矢印＋角丸＋フォーカスリング） */
-      select {
+  select {
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
         font-size: 1em;
         line-height: 1.2;
-        color: #0f172a; /* slate-900 */
+  color: var(--text);
         padding: 8px 2.4em 8px 12px; /* 右は矢印分を確保 */
         min-height: 36px;
         border-radius: 10px;
@@ -152,8 +238,8 @@
       }
       /* 無効状態 */
       select:disabled {
-        color: #64748b; /* slate-500 */
-        background: #f1f5f9; /* slate-100 */
+        color: var(--muted);
+        background: var(--surface);
         border-color: #e2e8f0; /* slate-200 */
         cursor: not-allowed;
         opacity: 1;
@@ -168,7 +254,7 @@
       /* ボタンのデザイン */
       button,
       .printButton {
-        background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+        background: linear-gradient(90deg, var(--primary) 60%, #42a5f5 100%);
         color: #fff;
         border: none;
         border-radius: 6px;
@@ -201,7 +287,7 @@
       #answerArea {
         border: 1.5px solid #b0b0b0;
         border-radius: 10px;
-        background: #fafdff;
+        background: var(--surface);
         box-shadow: 0 1.5px 6px rgba(60, 80, 120, 0.04);
         margin-bottom: 18px;
         /* 追加: 印刷エリアの高さを広げる */
@@ -265,7 +351,7 @@
       /* メニュー項目の表示・非表示制御 */
       #menu-items {
         display: none;
-        background: #fff;
+        background: var(--card-bg);
         border: 1.5px solid #b0b0b0;
         border-radius: 10px;
         box-shadow: 0 2px 12px rgba(60, 80, 120, 0.13);
@@ -282,7 +368,7 @@
       /* メニュー内リンクのデザイン */
       #menu-items a {
         display: block;
-        color: #1976d2;
+        color: var(--primary);
         text-decoration: none;
         margin: 12px 0;
         font-size: 1.08em;
@@ -294,8 +380,8 @@
 
       /* メニューリンクのホバー時 */
       #menu-items a:hover {
-        background: #e3eafc;
-        color: #1565c0;
+        background: rgba(79,195,247,0.08);
+        color: #81d4fa;
       }
 
       /* 画面幅が狭い時のレスポンシブ対応 */
@@ -633,6 +719,42 @@
           });
         });
       });
+    </script>
+    <script>
+      // Theme toggle: persist preference and apply class to <html>
+      (function(){
+        const KEY = 'calc_print_theme';
+        const toggle = () => document.getElementById('themeToggle');
+
+        function applyTheme(name) {
+          const root = document.documentElement;
+          if (name === 'dark') root.classList.add('theme-dark');
+          else root.classList.remove('theme-dark');
+        }
+
+        function loadPreference() {
+          const stored = localStorage.getItem(KEY);
+          if (stored === 'dark' || stored === 'light') return stored;
+          // fallback to OS preference
+          const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          return prefersDark ? 'dark' : 'light';
+        }
+
+        function init() {
+          const pref = loadPreference();
+          applyTheme(pref);
+          const el = toggle();
+          if (!el) return;
+          el.checked = pref === 'dark';
+          el.addEventListener('change', function(){
+            const newTheme = el.checked ? 'dark' : 'light';
+            applyTheme(newTheme);
+            try { localStorage.setItem(KEY, newTheme); } catch(e){}
+          });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+      })();
     </script>
     <script>
   // 印刷ボタンの有効/無効を更新する関数
@@ -2006,8 +2128,19 @@
             const previewBtn = document.getElementById('previewBtn');
             const previewContent = document.getElementById('previewContent');
 
-            const STORAGE_KEY = 'prehtml_settings_v1';
-            const STORAGE_LIST_KEY = 'prehtml_settings_list_v1';
+            // storage keys: resolved at runtime so they can be account-scoped
+            function getSettingsKey() {
+              try {
+                const acc = (window.AccountManager && window.AccountManager.getAccount) ? window.AccountManager.getAccount() : null;
+                return (acc && acc.username) ? 'prehtml_settings_v1_' + acc.username : 'prehtml_settings_v1';
+              } catch (e) { return 'prehtml_settings_v1'; }
+            }
+            function getSettingsListKey() {
+              try {
+                const acc = (window.AccountManager && window.AccountManager.getAccount) ? window.AccountManager.getAccount() : null;
+                return (acc && acc.username) ? 'prehtml_settings_list_v1_' + acc.username : 'prehtml_settings_list_v1';
+              } catch (e) { return 'prehtml_settings_list_v1'; }
+            }
 
             // フォームの現在設定をオブジェクトにまとめるユーティリティ
             // - FormData を使って簡易に値を取得しますが、チェックボックスが unchecked の場合は FormData に含まれないため
@@ -2056,12 +2189,12 @@
             // Saved settings list helpers
             function loadSavedList() {
               try {
-                const raw = localStorage.getItem(STORAGE_LIST_KEY);
+                const raw = localStorage.getItem(getSettingsListKey());
                 return raw ? JSON.parse(raw) : {};
               } catch (e) { console.error('loadSavedList', e); return {}; }
             }
             function saveSavedList(listObj) {
-              localStorage.setItem(STORAGE_LIST_KEY, JSON.stringify(listObj));
+              localStorage.setItem(getSettingsListKey(), JSON.stringify(listObj));
             }
 
             // UI: populate saved settings select
@@ -2079,62 +2212,101 @@
               });
             }
 
-            // Save new named settings
-            // - ユーザーが入力した名前で現在のフォーム設定を localStorage に保存します。
-            // - 同名が存在する場合は上書きされます（必要であれば確認ダイアログを追加可能）。
-            saveBtn && saveBtn.addEventListener('click', function(){
-              const nameInput = document.getElementById('saveName');
-              const name = nameInput && nameInput.value.trim();
-              if (!name) { alert('保存名を入力してください。'); if (nameInput) nameInput.focus(); return; }
-              const settings = collectSettings();
-              const list = loadSavedList();
-              list[name] = settings;
+            // react to account changes: when user logs out, reset form; when logs in, refresh saved list
+            document.addEventListener('accountChanged', function(ev){
+              // refresh list for current account
+              try { refreshSavedListUI(); } catch(e){}
+              // if logged out, reset form to defaults
               try {
-                saveSavedList(list);
-                refreshSavedListUI();
-                // 保存名入力欄をクリアしてフォーカスを外す
-                if (nameInput) { nameInput.value = ''; nameInput.blur(); }
-                alert('設定を保存しました: ' + name);
-              }
-              catch(e){ console.error(e); alert('保存に失敗しました。'); }
+                const acc = (window.AccountManager && window.AccountManager.getAccount) ? window.AccountManager.getAccount() : null;
+                if (!acc) {
+                  form.reset();
+                  document.querySelectorAll('select,input').forEach(el => el.dispatchEvent(new Event('change')));
+                  try { if (typeof updatePrintButtons === 'function') updatePrintButtons(); } catch(e){}
+                }
+              } catch(e){}
             });
 
-            // Load selected named settings
-            // - 選択した名前の設定を localStorage から復元し、フォームに反映します。
-            // - 読み込み後はプレビューを更新して、画面上の反映を確認できるようにしています。
-            loadBtn && loadBtn.addEventListener('click', function(){
-              const sel = document.getElementById('savedSettingsList');
-              if (!sel) return;
-              const name = sel.value;
-              if (!name) { alert('読み込む設定をリストから選択してください。'); return; }
-              const list = loadSavedList();
-              if (!list[name]) { alert('選択した設定が見つかりません。'); refreshSavedListUI(); return; }
-              try { applySettings(list[name]); alert('設定を読み込みました: ' + name); try { generatePreview(); } catch(e){} }
-              catch(e){ console.error(e); alert('読み込みに失敗しました。'); }
-            });
+            // helper: check login
+            function isLoggedIn() {
+              try { const acc = (window.AccountManager && window.AccountManager.getAccount) ? window.AccountManager.getAccount() : null; return !!(acc && acc.username); } catch(e){ return false; }
+            }
 
-            // Delete selected named settings
-            // - 選択した保存設定を localStorage から削除します（確認ダイアログ付き）。
+            // Save new named settings
+            // - This action is only available when logged in. Disable button otherwise.
+            if (saveBtn) {
+              // initial state
+              try { saveBtn.disabled = !isLoggedIn(); if (saveBtn.disabled) saveBtn.title = 'ログインしているときのみ保存できます'; } catch(e){}
+              // toggle when account changes
+              document.addEventListener('accountChanged', function(){ try { saveBtn.disabled = !isLoggedIn(); saveBtn.title = saveBtn.disabled ? 'ログインしているときのみ保存できます' : ''; } catch(e){} });
+
+              saveBtn.addEventListener('click', function(){
+                if (!isLoggedIn()) { alert('設定の保存はログイン時のみ利用できます。'); return; }
+                const nameInput = document.getElementById('saveName');
+                const name = nameInput && nameInput.value.trim();
+                if (!name) { alert('保存名を入力してください。'); if (nameInput) nameInput.focus(); return; }
+                const settings = collectSettings();
+                const list = loadSavedList();
+                list[name] = settings;
+                try {
+                  saveSavedList(list);
+                  refreshSavedListUI();
+                  // 保存名入力欄をクリアしてフォーカスを外す
+                  if (nameInput) { nameInput.value = ''; nameInput.blur(); }
+                  alert('設定を保存しました: ' + name);
+                }
+                catch(e){ console.error(e); alert('保存に失敗しました。'); }
+              });
+            }
+
+            // Load selected named settings (login required)
+            if (loadBtn) {
+              try { loadBtn.disabled = !isLoggedIn(); } catch(e){}
+              document.addEventListener('accountChanged', function(){ try { loadBtn.disabled = !isLoggedIn(); } catch(e){} });
+              loadBtn.addEventListener('click', function(){
+                if (!isLoggedIn()) { alert('設定の読み込みはログイン時のみ利用できます。'); return; }
+                const sel = document.getElementById('savedSettingsList');
+                if (!sel) return;
+                const name = sel.value;
+                if (!name) { alert('読み込む設定をリストから選択してください。'); return; }
+                const list = loadSavedList();
+                if (!list[name]) { alert('選択した設定が見つかりません。'); refreshSavedListUI(); return; }
+                try { applySettings(list[name]); alert('設定を読み込みました: ' + name); try { generatePreview(); } catch(e){} }
+                catch(e){ console.error(e); alert('読み込みに失敗しました。'); }
+              });
+            }
+
+            // Delete selected named settings (login required)
             const deleteBtn = document.getElementById('deleteSetting');
-            deleteBtn && deleteBtn.addEventListener('click', function(){
-              const sel = document.getElementById('savedSettingsList');
-              if (!sel) return;
-              const name = sel.value;
-              if (!name) { alert('削除する設定をリストから選択してください。'); return; }
-              if (!confirm('設定 "' + name + '" を削除しますか？')) return;
-              const list = loadSavedList();
-              if (list[name]) delete list[name];
-              try { saveSavedList(list); refreshSavedListUI(); alert('削除しました: ' + name); try { generatePreview(); } catch(e){} }
-              catch(e){ console.error(e); alert('削除に失敗しました。'); }
-            });
+            if (deleteBtn) {
+              try { deleteBtn.disabled = !isLoggedIn(); } catch(e){}
+              document.addEventListener('accountChanged', function(){ try { deleteBtn.disabled = !isLoggedIn(); } catch(e){} });
+              deleteBtn.addEventListener('click', function(){
+                if (!isLoggedIn()) { alert('設定の削除はログイン時のみ利用できます。'); return; }
+                const sel = document.getElementById('savedSettingsList');
+                if (!sel) return;
+                const name = sel.value;
+                if (!name) { alert('削除する設定をリストから選択してください。'); return; }
+                if (!confirm('設定 "' + name + '" を削除しますか？')) return;
+                const list = loadSavedList();
+                if (list[name]) delete list[name];
+                try { saveSavedList(list); refreshSavedListUI(); alert('削除しました: ' + name); try { generatePreview(); } catch(e){} }
+                catch(e){ console.error(e); alert('削除に失敗しました。'); }
+              });
+            }
 
-            resetBtn && resetBtn.addEventListener('click', function(){
-              if (!confirm('設定をデフォルトにリセットしますか？')) return;
-              form.reset();
-              // trigger change events
-              document.querySelectorAll('select,input').forEach(el => el.dispatchEvent(new Event('change')));
-              try { if (typeof updatePrintButtons === 'function') updatePrintButtons(); } catch(e){}
-            });
+            if (resetBtn) {
+              try { resetBtn.disabled = !isLoggedIn(); } catch(e){}
+              document.addEventListener('accountChanged', function(){ try { resetBtn.disabled = !isLoggedIn(); } catch(e){} });
+              resetBtn.addEventListener('click', function(){
+                if (!isLoggedIn()) { alert('リセットはログイン時のみ利用できます。'); return; }
+                if (!confirm('設定をデフォルトにリセットしますか？')) return;
+                form.reset();
+                // trigger change events
+                document.querySelectorAll('select,input').forEach(el => el.dispatchEvent(new Event('change')));
+                try { if (typeof updatePrintButtons === 'function') updatePrintButtons(); } catch(e){}
+              });
+            }
 
             // live preview: generate a single sample question using current form values
             function generatePreview() {
@@ -2186,6 +2358,20 @@
             }
 
             previewBtn && previewBtn.addEventListener('click', generatePreview);
+
+            // hide or show the full save-controls block when logged out
+            (function(){
+              function updateSaveControlsVisibility(){
+                try{
+                  const wrap = document.getElementById('saveControlsWrapper');
+                  if (!wrap) return;
+                  wrap.style.display = isLoggedIn() ? 'flex' : 'none';
+                }catch(e){}
+              }
+              // initial
+              try{ updateSaveControlsVisibility(); }catch(e){}
+              document.addEventListener('accountChanged', function(){ try{ updateSaveControlsVisibility(); }catch(e){} });
+            })();
 
       // auto-update preview on form changes (debounced)
             // but ignore inputs that belong to the save/load UI to avoid
@@ -2330,14 +2516,21 @@
         <span></span>
         <span></span>
       </div>
-      <div id="menu-items">
+  <div id="menu-items">
   <a href="#" id="menuHome">ホーム</a><br />
-        <a href="#">マイページ</a><br />
-        <a href="#">設定</a><br />
-        <a href="#">お知らせ</a><br />
-        <a href="#">サポート</a><br />
-        <!-- イントロ／使い方をメニュー内で開く -->
-        <a href="#" id="openIntroFromMenu">使い方（イントロ）</a>
+    <!-- My Page: opens modal. shows short status in-menu -->
+    <a href="#" id="openMyPageFromMenu">マイページ <span id="menuAccountStatus" style="margin-left:6px;font-size:0.85em;color:#1976d2;"></span></a><br />
+    <a href="#">設定</a><br />
+  <a href="#" id="openNoticesFromMenu">お知らせ</a><br />
+    <a href="#" id="openSupportFromMenu">サポート</a><br />
+    <!-- イントロ／使い方をメニュー内で開く -->
+    <a href="#" id="openIntroFromMenu">使い方（イントロ）</a>
+        <div style="margin-top:12px; border-top:1px solid rgba(0,0,0,0.06); padding-top:10px;">
+          <label for="themeToggle" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="themeToggle" />
+            <span style="font-size:0.95em;color:var(--muted)">ダークモード</span>
+          </label>
+        </div>
       </div>
     </div>
     <!-- メインコンテンツ枠 -->
@@ -2784,14 +2977,17 @@
           </div>
   </div>
   <br />
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;padding:6px 0;">
+  <div id="saveControlsWrapper" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;padding:6px 0;">
     <label for="saveName" style="margin-left:8px;">保存名：</label>
     <input type="text" id="saveName" placeholder="例: 小数プリント" style="margin-left:6px;min-width:160px;" />
     <button type="button" id="saveSettings">設定を保存</button>
+    <span id="saveAuthNote" style="font-size:0.9em;color:var(--muted);margin-left:8px;">※保存/読み込み/削除はログイン時のみ利用できます</span>
     <select id="savedSettingsList" style="margin-left:8px;min-width:180px;"><option value="">-- 保存済み設定を選択 --</option></select>
     <button type="button" id="loadSettings">読み込み</button>
     <button type="button" id="deleteSetting">削除</button>
     <button type="button" id="resetSettings">リセット</button>
+  </div>
+  <div style="display:flex;align-items:center;margin-bottom:8px;">
     <button type="button" id="previewBtn">プレビュー更新</button>
   </div>
       </form>
@@ -3051,6 +3247,386 @@
           try { area.classList.remove('printing-area'); } catch(e){}
         }
       }
+    </script>
+    <!-- マイページ（アカウント管理）モーダルとアカウントスクリプト -->
+    <style>
+      /* MyPage modal styles */
+      #myPageModal { display: none; position: fixed; inset:0; background: rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:10020; }
+      #myPageModal .card { background: var(--card-bg); color: var(--text); width: 420px; max-width:94%; padding:16px 18px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.25); }
+      #myPageModal .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+      #myPageModal label { display:block; font-size:0.95em; margin-bottom:6px; }
+      #myPageModal input[type="text"], #myPageModal input[type="password"] { width:100%; padding:8px; border-radius:6px; border:1px solid #d0d7de; }
+      #myPageModal button { margin-top:6px; }
+      #menuAccountStatus.empty { color: #999; }
+    </style>
+
+    <div id="myPageModal" aria-hidden="true">
+      <div class="card" role="dialog" aria-modal="true" aria-labelledby="myPageTitle">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 id="myPageTitle" style="margin:0;color:var(--primary);">マイページ</h3>
+          <button type="button" onclick="closeMyPage()" aria-label="閉じる" style="background:transparent;border:none;color:var(--primary);font-size:1.1em;cursor:pointer;padding:4px;">✕</button>
+        </div>
+        <div id="accountArea" style="margin-top:12px;">
+          <!-- dynamic content injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- お知らせモーダル（管理画面から投稿されたものを表示） -->
+    <div id="noticesModal" style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:10020;">
+      <div style="background:var(--card-bg); color:var(--text); max-width:720px; width:94%; padding:16px 18px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.25);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="margin:0;color:var(--primary);">お知らせ</h3>
+          <button type="button" onclick="closeNotices()" aria-label="閉じる" style="background:transparent;border:none;color:var(--primary);font-size:1.1em;cursor:pointer;padding:4px;">✕</button>
+        </div>
+        <div id="noticesContent" style="margin-top:12px; max-height:60vh; overflow:auto;">
+          <!-- notices injected here -->
+        </div>
+      </div>
+    </div>
+
+      <!-- サポート送信モーダル（利用者側） -->
+      <div id="supportModal" style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:10020;">
+        <div style="background:var(--card-bg); color:var(--text); max-width:640px; width:94%; padding:16px 18px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.25);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;color:var(--primary);">サポート / フィードバック送信</h3>
+            <button type="button" onclick="closeSupport()" aria-label="閉じる" style="background:transparent;border:none;color:var(--primary);font-size:1.1em;cursor:pointer;padding:4px;">✕</button>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="margin-bottom:8px;"><label for="supportSubject">件名（任意）</label><input id="supportSubject" type="text" placeholder="件名を入力" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d0d7de;"/></div>
+            <div style="margin-bottom:8px;"><label for="supportMessage">メッセージ</label><textarea id="supportMessage" rows="6" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d0d7de;" placeholder="使い方の質問や不具合の報告、要望などを書いて送信してください。"></textarea></div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;"><button type="button" onclick="submitSupport()">送信</button><button type="button" class="ghost" onclick="closeSupport()">閉じる</button></div>
+            <div id="supportNotice" style="margin-top:8px;font-size:0.9em;color:var(--muted);"></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function(){
+        const STORAGE_KEY = 'calc_print_account_v1';
+
+        function getAccount(){
+          try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; } catch(e) { return null; }
+        }
+        function setAccount(obj){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); dispatchAccountChanged(); } catch(e){} }
+        function clearAccount(){ try { localStorage.removeItem(STORAGE_KEY); dispatchAccountChanged(); } catch(e){} }
+
+        // dispatch a custom event when account changes so other parts can react
+        function dispatchAccountChanged(){
+          try { document.dispatchEvent(new CustomEvent('accountChanged', { detail: { account: getAccount() } })); } catch(e){}
+        }
+
+        // expose simple AccountManager API
+        window.AccountManager = {
+          getAccount: getAccount,
+          // helper: hash password using SHA-256, return hex string
+          hashPassword: async function(p){
+            const enc = new TextEncoder();
+            const data = enc.encode(p || '');
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+          },
+          register: async function(username, password) {
+            username = (username || '').trim();
+            if (!username) throw new Error('ユーザー名を入力してください');
+            function validPassword(p){ return typeof p === 'string' && p.length >= 8 && /[A-Za-z]/.test(p) && /[0-9]/.test(p); }
+            if (!validPassword(password)) throw new Error('パスワードは英字と数字を両方含む8文字以上で入力してください');
+            const usersKey = 'calc_print_users_v1';
+            let users = {};
+            try { users = JSON.parse(localStorage.getItem(usersKey)) || {}; } catch(e) { users = {}; }
+            if (users[username]) throw new Error('ユーザー名は既に存在します');
+            const hashed = await window.AccountManager.hashPassword(password);
+            users[username] = { password: hashed, createdAt: Date.now() };
+            localStorage.setItem(usersKey, JSON.stringify(users));
+            setAccount({ username: username, loggedAt: Date.now() });
+            return true;
+          },
+          login: async function(username, password) {
+            const usersKey = 'calc_print_users_v1';
+            function validPassword(p){ return typeof p === 'string' && p.length >= 8 && /[A-Za-z]/.test(p) && /[0-9]/.test(p); }
+            const users = JSON.parse(localStorage.getItem(usersKey) || '{}');
+            if (!username || !username.trim()) throw new Error('ユーザー名を入力してください');
+            if (!users[username]) throw new Error('ユーザーが存在しません');
+            if (!password) throw new Error('パスワードを入力してください');
+            if (!validPassword(password)) throw new Error('パスワードは英字と数字を両方含む8文字以上である必要があります');
+            const stored = users[username];
+            const hashed = await window.AccountManager.hashPassword(password);
+            if (stored.password !== hashed) throw new Error('パスワードが一致しません');
+            setAccount({ username: username, loggedAt: Date.now() });
+            return true;
+          },
+          logout: function(){ clearAccount(); },
+          exportUserData: function(username) {
+            try {
+              if (!username) return null;
+              const usersKey = 'calc_print_users_v1';
+              const users = JSON.parse(localStorage.getItem(usersKey) || '{}');
+              const userRec = users[username] || null;
+              const settingsKey = 'prehtml_settings_v1_' + username;
+              const listKey = 'prehtml_settings_list_v1_' + username;
+              let settings = null;
+              let savedList = {};
+              try { settings = JSON.parse(localStorage.getItem(settingsKey)); } catch(e) { settings = null; }
+              try { savedList = JSON.parse(localStorage.getItem(listKey) || '{}'); } catch(e) { savedList = {}; }
+              const out = { user: Object.assign({ username: username }, userRec || {}), settings: settings, savedList: savedList, exportedAt: Date.now() };
+              const json = JSON.stringify(out, null, 2);
+              const blob = new Blob([json], { type: 'application/json' });
+              const pad = n => n.toString().padStart(2,'0');
+              const d = new Date();
+              const fname = `export_${username}_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.json`;
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = fname;
+              document.body.appendChild(a);
+              a.click();
+              setTimeout(()=>{ try{ URL.revokeObjectURL(a.href); a.remove(); }catch(e){} }, 500);
+              return out;
+            } catch(e) { console.error('exportUserData error', e); return null; }
+          }
+        };
+
+        // update menu status label
+        function updateMenuStatus(){
+          const status = document.getElementById('menuAccountStatus');
+          const acc = getAccount();
+          if (!status) return;
+          if (acc && acc.username) {
+            status.textContent = acc.username;
+            status.classList.remove('empty');
+          } else {
+            status.textContent = '(未ログイン)';
+            status.classList.add('empty');
+          }
+        }
+
+        // render account area inside modal
+        function renderAccountArea(){
+          const area = document.getElementById('accountArea');
+          const acc = getAccount();
+          area.innerHTML = '';
+          if (acc && acc.username) {
+            const info = document.createElement('div');
+            info.innerHTML = `<div style="font-weight:700;margin-bottom:8px;">ようこそ、${escapeHtml(acc.username)} さん</div>`;
+            area.appendChild(info);
+            const logoutBtn = document.createElement('button');
+            logoutBtn.textContent = 'ログアウト';
+            logoutBtn.type = 'button';
+            logoutBtn.addEventListener('click', function(){
+              if (!confirm('ログアウトしますか？')) return;
+              clearAccount(); updateMenuStatus(); renderAccountArea();
+            });
+            area.appendChild(logoutBtn);
+            // account deletion (完全削除)
+            const delSep = document.createElement('div'); delSep.style.height='8px'; area.appendChild(delSep);
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.textContent = 'アカウントを削除';
+            deleteBtn.style.background = 'linear-gradient(90deg,#e53935,#ef5350)';
+            deleteBtn.style.color = '#fff';
+            deleteBtn.style.marginLeft = '6px';
+            deleteBtn.addEventListener('click', function(){
+              if (!confirm('本当にアカウントと、その保存設定を完全に削除しますか？この操作は元に戻せません。')) return;
+              try {
+                const username = acc && acc.username;
+                // export before delete
+                try {
+                  if (window.AccountManager && username) {
+                    window.AccountManager.exportUserData(username);
+                  }
+                } catch(e) { console.warn('export before delete failed', e); }
+
+                // remove from users registry
+                const usersKey = 'calc_print_users_v1';
+                let users = {};
+                try { users = JSON.parse(localStorage.getItem(usersKey)) || {}; } catch(e){ users = {}; }
+                if (username && users[username]) { delete users[username]; localStorage.setItem(usersKey, JSON.stringify(users)); }
+                // remove per-account settings keys
+                if (username) {
+                  try { localStorage.removeItem('prehtml_settings_v1_' + username); } catch(e){}
+                  try { localStorage.removeItem('prehtml_settings_list_v1_' + username); } catch(e){}
+                }
+                // clear current account (this dispatches accountChanged)
+                clearAccount(); updateMenuStatus(); renderAccountArea();
+                alert('アカウントと関連データを削除しました（エクスポート済み）');
+              } catch (e) {
+                console.error('delete account error', e);
+                alert('アカウント削除中にエラーが発生しました');
+              }
+            });
+            area.appendChild(deleteBtn);
+          } else {
+            // show simple login form
+            const form = document.createElement('div');
+            form.innerHTML = `
+              <label for="mpUser">ユーザー名</label>
+              <input id="mpUser" type="text" placeholder="ユーザー名を入力" />
+              <label for="mpPass" style="margin-top:8px;">パスワード</label>
+              <input id="mpPass" type="password" placeholder="パスワード" />
+            `;
+            const loginBtn = document.createElement('button');
+            loginBtn.type = 'button';
+            loginBtn.textContent = 'ログイン';
+            loginBtn.addEventListener('click', async function(){
+              const u = document.getElementById('mpUser').value.trim();
+              const p = document.getElementById('mpPass').value || '';
+              if (!u) { alert('ユーザー名を入力してください'); document.getElementById('mpUser').focus(); return; }
+              try {
+                if (!window.AccountManager) throw new Error('AccountManager not ready');
+                await window.AccountManager.login(u, p);
+                updateMenuStatus(); renderAccountArea();
+                alert('ログインしました: ' + u);
+              } catch (e) { alert('ログインエラー: ' + (e && e.message ? e.message : e)); }
+            });
+            form.appendChild(loginBtn);
+            // registration UI
+            const sep = document.createElement('div'); sep.style.margin='8px 0'; sep.style.borderTop='1px dashed #ddd'; form.appendChild(sep);
+            const regBtn = document.createElement('button'); regBtn.type='button'; regBtn.textContent='新規登録';
+            regBtn.addEventListener('click', function(){ showRegistrationForm(area); });
+            form.appendChild(regBtn);
+            area.appendChild(form);
+            const note = document.createElement('div');
+            note.style.fontSize = '0.85em'; note.style.color = 'var(--muted)'; note.style.marginTop='8px';
+            note.textContent = '※この機能はローカル保存（ブラウザ限定）です。実際の認証は行われません。';
+            area.appendChild(note);
+          }
+
+          // show registration UI separate from quick-login inputs
+          function showRegistrationForm(container) {
+            container.innerHTML = '';
+            const wrap = document.createElement('div');
+            wrap.innerHTML = `
+              <label for="regUser">新しいユーザー名</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input id="regUser" type="text" placeholder="ユーザー名を入力" />
+                <span id="regUserStatus" aria-hidden="true" style="font-size:0.95em;"></span>
+              </div>
+              <div id="regUserNote" style="font-size:0.82em;color:#d32f2f;margin-top:4px;"></div>
+              <label for="regPass" style="margin-top:8px;">パスワード（英数字を含む8文字以上）</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input id="regPass" type="password" placeholder="パスワードを入力" />
+                <span id="regPassStatus" aria-hidden="true" style="font-size:0.95em;"></span>
+              </div>
+              <div id="regPassNote" style="font-size:0.82em;color:#d32f2f;margin-top:4px;"></div>
+            `;
+            const btnRow = document.createElement('div'); btnRow.style.marginTop='8px'; btnRow.style.display='flex'; btnRow.style.gap='8px';
+            const submit = document.createElement('button'); submit.type='button'; submit.textContent='登録してログイン';
+            const cancel = document.createElement('button'); cancel.type='button'; cancel.textContent='キャンセル';
+            btnRow.appendChild(submit); btnRow.appendChild(cancel);
+            wrap.appendChild(btnRow);
+            container.appendChild(wrap);
+
+            submit.addEventListener('click', async function(){
+              const uEl = document.getElementById('regUser');
+              const pEl = document.getElementById('regPass');
+              const u = uEl.value.trim();
+              const p = pEl.value || '';
+              try {
+                if (!u) { alert('ユーザー名を入力してください'); uEl.focus(); return; }
+                if (!window.AccountManager) throw new Error('AccountManager not ready');
+                await window.AccountManager.register(u, p);
+                updateMenuStatus(); renderAccountArea();
+                alert('登録してログインしました: ' + u);
+              } catch (e) { alert('登録エラー: ' + (e && e.message ? e.message : e)); }
+            });
+            // live validation: username uniqueness and password policy
+            (function(){
+              const userInput = wrap.querySelector('#regUser');
+              const userStatus = wrap.querySelector('#regUserStatus');
+              const userNote = wrap.querySelector('#regUserNote');
+              const passInput = wrap.querySelector('#regPass');
+              const passStatus = wrap.querySelector('#regPassStatus');
+              const passNote = wrap.querySelector('#regPassNote');
+              function validPassword(p){ return typeof p === 'string' && p.length >= 8 && /[A-Za-z]/.test(p) && /[0-9]/.test(p); }
+              function checkUser(){
+                const v = (userInput.value || '').trim();
+                if (!v) { userStatus.textContent = ''; userNote.textContent = ''; return; }
+                let users = {};
+                try { users = JSON.parse(localStorage.getItem('calc_print_users_v1') || '{}'); } catch(e){ users = {}; }
+                if (users[v]) {
+                  userStatus.textContent = '';
+                  userNote.textContent = 'このユーザー名は既に使われています';
+                  userNote.style.color = '#d32f2f';
+                } else {
+                  userNote.textContent = '';
+                  userStatus.textContent = '✓ 使用可能';
+                  userStatus.style.color = '#2e7d32';
+                }
+              }
+              function checkPass(){
+                const v = passInput.value || '';
+                if (!v) { passStatus.textContent = ''; passNote.textContent = ''; return; }
+                if (!validPassword(v)) {
+                  passStatus.textContent = '';
+                  passNote.textContent = 'パスワードは英字と数字を両方含む8文字以上である必要があります';
+                  passNote.style.color = '#d32f2f';
+                } else {
+                  passNote.textContent = '';
+                  passStatus.textContent = '✓ OK';
+                  passStatus.style.color = '#2e7d32';
+                }
+              }
+              userInput.addEventListener('input', checkUser);
+              passInput.addEventListener('input', checkPass);
+              // initial check in case autofill
+              checkUser(); checkPass();
+            })();
+            cancel.addEventListener('click', function(){ renderAccountArea(); });
+          }
+        }
+
+        // simple html escape
+        function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]; }); }
+
+        window.openMyPage = function(){
+          const modal = document.getElementById('myPageModal');
+          if (!modal) return;
+          renderAccountArea();
+          modal.style.display = 'flex';
+          modal.setAttribute('aria-hidden','false');
+        }
+        window.closeMyPage = function(){
+          const modal = document.getElementById('myPageModal');
+          if (!modal) return;
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden','true');
+        }
+
+        // --- notices integration (reads admin_notices_v1) ---
+        function loadNotices(){ try { return JSON.parse(localStorage.getItem('admin_notices_v1') || '[]'); } catch(e){ return []; } }
+        function renderNoticesModal(){ const target = document.getElementById('noticesContent'); if(!target) return; const notes = loadNotices(); target.innerHTML = ''; if(!notes || notes.length===0){ target.innerHTML = '<div class="muted">現在、お知らせはありません。</div>'; return; } notes.slice().reverse().forEach(n=>{ const el = document.createElement('div'); el.style.padding='8px'; el.style.borderBottom='1px solid #eee'; el.innerHTML = `<div style="font-weight:700">${escapeHtml(n.title||'お知らせ')}</div><div style="margin-top:6px;">${escapeHtml(n.text)}</div><div class="muted" style="margin-top:6px;">${new Date(n.postedAt).toLocaleString()}</div>`; target.appendChild(el); }); }
+        window.openNotices = function(){ const modal = document.getElementById('noticesModal'); if(!modal) return; renderNoticesModal(); modal.style.display='flex'; }
+        window.closeNotices = function(){ const modal = document.getElementById('noticesModal'); if(!modal) return; modal.style.display='none'; }
+
+        // hook notices menu link and react to storage changes
+        document.addEventListener('DOMContentLoaded', function(){
+          const noticeLink = document.getElementById('openNoticesFromMenu');
+          if (noticeLink) noticeLink.addEventListener('click', function(e){ e.preventDefault(); openNotices(); const m = document.getElementById('menu'); if (m && m.classList.contains('open')) m.classList.remove('open'); });
+          // support menu link
+          const supportLink = document.getElementById('openSupportFromMenu');
+          if (supportLink) supportLink.addEventListener('click', function(e){ e.preventDefault(); openSupport(); const m = document.getElementById('menu'); if (m && m.classList.contains('open')) m.classList.remove('open'); });
+
+          window.addEventListener('storage', function(ev){ try{ if(!ev || !ev.key) return; if(ev.key === 'admin_notices_v1'){ renderNoticesModal(); } if(ev.key === 'admin_support_v1'){ /* optionally update UI if needed */ } }catch(e){} });
+        });
+
+        // open/close support modal and submit
+        window.openSupport = function(){ const modal = document.getElementById('supportModal'); if(!modal) return; const acc = getAccount(); const name = acc && acc.username ? acc.username : '匿名'; const sub = document.getElementById('supportSubject'); const msg = document.getElementById('supportMessage'); const note = document.getElementById('supportNotice'); if(sub) sub.value=''; if(msg) msg.value=''; if(note) note.textContent = '送信者: ' + name; modal.style.display='flex'; }
+        window.closeSupport = function(){ const modal = document.getElementById('supportModal'); if(!modal) return; modal.style.display='none'; }
+
+        window.submitSupport = function(){ try{ const subj = (document.getElementById('supportSubject')||{}).value || ''; const message = (document.getElementById('supportMessage')||{}).value || ''; const acc = getAccount(); const user = acc && acc.username ? acc.username : null; if(!message || !message.trim()){ document.getElementById('supportNotice').textContent='メッセージを入力してください'; return; } const key = 'admin_support_v1'; let arr = []; try{ arr = JSON.parse(localStorage.getItem(key) || '[]'); }catch(e){ arr = []; } arr.push({ user: user, subject: subj, message: message, at: Date.now() }); try{ localStorage.setItem(key, JSON.stringify(arr)); }catch(e){} document.getElementById('supportNotice').textContent='送信しました。管理者が確認します。'; // close after small delay
+          setTimeout(()=>{ try{ closeSupport(); }catch(e){} }, 900);
+        }catch(e){ console.error('submitSupport error', e); alert('送信に失敗しました'); } }
+
+        // hook menu link
+        document.addEventListener('DOMContentLoaded', function(){
+          const l = document.getElementById('openMyPageFromMenu');
+          if (l) l.addEventListener('click', function(e){ e.preventDefault(); const m = document.getElementById('menu'); if (m && m.classList.contains('open')) m.classList.remove('open'); openMyPage(); });
+          // close modal on background click
+          const modal = document.getElementById('myPageModal');
+          if (modal) modal.addEventListener('click', function(e){ if (e.target === modal) closeMyPage(); });
+          // update initial status
+          updateMenuStatus();
+        });
+      })();
     </script>
   </body>
 </html>
