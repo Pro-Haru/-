@@ -2520,8 +2520,15 @@
   <a href="#" id="menuHome">ホーム</a><br />
     <!-- My Page: opens modal. shows short status in-menu -->
     <a href="#" id="openMyPageFromMenu">マイページ <span id="menuAccountStatus" style="margin-left:6px;font-size:0.85em;color:#1976d2;"></span></a><br />
-    <a href="#">設定</a><br />
-  <a href="#" id="openNoticesFromMenu">お知らせ</a><br />
+    <a href="#" id="openMenuSettings">設定</a><br />
+  <div id="menuSettings" style="display:none;margin-top:8px;padding:8px;border:1px solid rgba(0,0,0,0.04);border-radius:8px;background:var(--card-bg);">
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
+        <div style="font-size:0.95em;color:var(--muted);">お知らせ到着時にトーストを表示</div>
+        <input type="checkbox" id="menuToastCheckbox" />
+      </label>
+    </div>
+  <a href="#" id="openNoticesFromMenu">お知らせ <span id="noticesBadge" style="display:none; background:#e53935;color:#fff;padding:2px 6px;border-radius:999px;font-size:0.75em;vertical-align:middle;margin-left:8px;"></span></a><br />
+  <div id="menuNoticesDropdown" style="display:none;margin-top:6px;background:var(--card-bg);border:1px solid rgba(0,0,0,0.04);padding:8px;border-radius:8px;max-height:220px;overflow:auto;"></div>
     <a href="#" id="openSupportFromMenu">サポート</a><br />
     <!-- イントロ／使い方をメニュー内で開く -->
     <a href="#" id="openIntroFromMenu">使い方（イントロ）</a>
@@ -3338,6 +3345,8 @@
             const hashed = await window.AccountManager.hashPassword(password);
             users[username] = { password: hashed, createdAt: Date.now() };
             localStorage.setItem(usersKey, JSON.stringify(users));
+            // if FirestoreSync is available, push this user
+            try{ if (window.FirestoreSync && typeof window.FirestoreSync.pushAllUsers === 'function') { window.FirestoreSync.pushAllUsers().catch(e=>console.warn('pushAllUsers failed',e)); } }catch(e){}
             setAccount({ username: username, loggedAt: Date.now() });
             return true;
           },
@@ -3399,6 +3408,33 @@
           }
         }
 
+        // --- Firebase Sync module (optional) ---
+        (function(){
+          const CFG_KEY = 'firebase_config_v1';
+          const CLIENT_KEY = 'sync_client_id_v1';
+          const USERS_COL = 'users';
+          const NOTICES_COL = 'notices';
+          let clientId = localStorage.getItem(CLIENT_KEY) || (function(){ const id = 'c-' + Date.now().toString(36) + '-' + Math.floor(Math.random()*0xFFFFFF).toString(36); localStorage.setItem(CLIENT_KEY,id); return id; })();
+          let firebaseLoaded = false;
+          let db = null;
+          function loadScript(url){ return new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = url; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+          async function ensureFirebase(){
+            if (firebaseLoaded && window.firebase && window.firebase.firestore) return window.firebase;
+            const cfg = (window.FIREBASE_CONFIG) ? window.FIREBASE_CONFIG : (function(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY) || 'null'); }catch(e){ return null; } })();
+            if (!cfg) { console.log('Firebase config not found; skipping Firestore sync'); return null; }
+            try{ await loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js'); await loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js'); await loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js'); }catch(e){ console.error('Failed loading Firebase SDKs', e); return null; }
+            try{ if (!window.firebase.apps || !window.firebase.apps.length) window.firebase.initializeApp(cfg); }catch(e){}
+            firebaseLoaded = true;
+            try{ const auth = window.firebase.auth(); if (!auth.currentUser) { await auth.signInAnonymously(); } }catch(e){ console.warn('anonymous sign-in failed or not available', e); }
+            db = window.firebase.firestore(); return window.firebase;
+          }
+          async function initSyncListeners(){ try{ const fb = await ensureFirebase(); if(!fb) return; db.collection(USERS_COL).onSnapshot(snap=>{ const newUsers = {}; snap.forEach(d=>{ try{ newUsers[d.id] = d.data(); delete newUsers[d.id]._meta_origin; }catch(e){} }); try{ const local = JSON.parse(localStorage.getItem('calc_print_users_v1')||'{}'); const merged = Object.assign({}, local, newUsers); localStorage.setItem('calc_print_users_v1', JSON.stringify(merged)); console.log('Firestore -> local users merged (index)'); }catch(e){ console.error(e); } }, err=>{ console.error('users onSnapshot error',err); }); db.collection(NOTICES_COL).onSnapshot(snap=>{ const arr = []; snap.forEach(d=>{ try{ const dd = d.data(); delete dd._meta_origin; arr.push(Object.assign({ id: d.id }, dd)); }catch(e){} }); try{ localStorage.setItem('admin_notices_v1', JSON.stringify(arr)); console.log('Firestore -> local notices merged (index)'); }catch(e){ console.error(e); } }, err=>{ console.error('notices onSnapshot error',err); }); }catch(e){ console.error('initSyncListeners error', e); } }
+          async function pushAllUsers(){ try{ const fb = await ensureFirebase(); if(!fb) return; const users = JSON.parse(localStorage.getItem('calc_print_users_v1') || '{}'); const batch = db.batch(); const authUid = (window.firebase && window.firebase.auth && window.firebase.auth().currentUser) ? window.firebase.auth().currentUser.uid : null; Object.keys(users).forEach(name=>{ const doc = db.collection(USERS_COL).doc(String(name)); const payload = Object.assign({}, users[name], { _meta_origin: clientId }); if (authUid) payload._meta_auth_uid = authUid; batch.set(doc, payload, { merge: true }); }); await batch.commit(); console.log('pushAllUsers -> firestore (index)'); }catch(e){ console.error('pushAllUsers error', e); } }
+          async function pushNoticeToFirestore(n){ try{ const fb = await ensureFirebase(); if(!fb) return; const id = n.id || (Date.now().toString(36)+'-'+Math.floor(Math.random()*0xFFFFFF).toString(36)); const doc = db.collection(NOTICES_COL).doc(String(id)); await doc.set(Object.assign({}, n, { _meta_origin: clientId })); console.log('pushed notice (index)', id); }catch(e){ console.error('pushNoticeToFirestore error', e); } }
+          window.FirestoreSync = { init: async function(){ const fb = await ensureFirebase(); if(!fb) return; await initSyncListeners(); console.log('FirestoreSync initialized (index)'); }, pushAllUsers: pushAllUsers, pushNotice: pushNoticeToFirestore, configKey: CFG_KEY };
+          (async function(){ try{ const cfg = (window.FIREBASE_CONFIG) ? window.FIREBASE_CONFIG : (function(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY) || 'null'); }catch(e){ return null; } })(); if (cfg) { await window.FirestoreSync.init(); } }catch(e){} })();
+        })();
+
         // render account area inside modal
         function renderAccountArea(){
           const area = document.getElementById('accountArea');
@@ -3454,6 +3490,7 @@
               }
             });
             area.appendChild(deleteBtn);
+            // ...existing code...
           } else {
             // show simple login form
             const form = document.createElement('div');
@@ -3591,10 +3628,20 @@
           modal.setAttribute('aria-hidden','true');
         }
 
-        // --- notices integration (reads admin_notices_v1) ---
-        function loadNotices(){ try { return JSON.parse(localStorage.getItem('admin_notices_v1') || '[]'); } catch(e){ return []; } }
+  // --- notices integration (reads admin_notices_v1) ---
+  function loadNotices(){ try { return JSON.parse(localStorage.getItem('admin_notices_v1') || '[]'); } catch(e){ return []; } }
+  // per-user preference key and last-seen key helpers
+  function noticePrefKey(username){ return 'pref_notices_toast_v1_' + (username || 'guest'); }
+  function lastSeenNoticesKey(username){ return 'lastSeen_admin_notices_v1_' + (username || 'guest'); }
+  // lastSeen stored as array of seen ids
+  function markAllNoticesSeenForCurrentUser(){ try{ const acc = getAccount(); const key = lastSeenNoticesKey(acc && acc.username ? acc.username : 'guest'); const notes = loadNotices() || []; const ids = (notes||[]).map(n=>n.id||(n.postedAt?String(n.postedAt):JSON.stringify(n))); localStorage.setItem(key, JSON.stringify(ids)); }catch(e){} }
+  function getSeenIdsForCurrentUser(){ try{ const acc = getAccount(); const key = lastSeenNoticesKey(acc && acc.username ? acc.username : 'guest'); return JSON.parse(localStorage.getItem(key) || '[]') || []; }catch(e){ return []; } }
+  function getNoticePref(){ try{ const acc = getAccount(); const key = noticePrefKey(acc && acc.username ? acc.username : 'guest'); const v = localStorage.getItem(key); if (v === null) return true; return v === 'true'; }catch(e){ return true; } }
+  function setNoticePref(val){ try{ const acc = getAccount(); const key = noticePrefKey(acc && acc.username ? acc.username : 'guest'); localStorage.setItem(key, val ? 'true' : 'false'); }catch(e){} }
         function renderNoticesModal(){ const target = document.getElementById('noticesContent'); if(!target) return; const notes = loadNotices(); target.innerHTML = ''; if(!notes || notes.length===0){ target.innerHTML = '<div class="muted">現在、お知らせはありません。</div>'; return; } notes.slice().reverse().forEach(n=>{ const el = document.createElement('div'); el.style.padding='8px'; el.style.borderBottom='1px solid #eee'; el.innerHTML = `<div style="font-weight:700">${escapeHtml(n.title||'お知らせ')}</div><div style="margin-top:6px;">${escapeHtml(n.text)}</div><div class="muted" style="margin-top:6px;">${new Date(n.postedAt).toLocaleString()}</div>`; target.appendChild(el); }); }
-        window.openNotices = function(){ const modal = document.getElementById('noticesModal'); if(!modal) return; renderNoticesModal(); modal.style.display='flex'; }
+        window.openNotices = function(){ const modal = document.getElementById('noticesModal'); if(!modal) return; renderNoticesModal(); modal.style.display='flex';
+          try{ markAllNoticesSeenForCurrentUser(); updateNoticesBadge(); hideNoticesToast(); }catch(e){}
+        }
         window.closeNotices = function(){ const modal = document.getElementById('noticesModal'); if(!modal) return; modal.style.display='none'; }
 
         // hook notices menu link and react to storage changes
@@ -3605,8 +3652,96 @@
           const supportLink = document.getElementById('openSupportFromMenu');
           if (supportLink) supportLink.addEventListener('click', function(e){ e.preventDefault(); openSupport(); const m = document.getElementById('menu'); if (m && m.classList.contains('open')) m.classList.remove('open'); });
 
-          window.addEventListener('storage', function(ev){ try{ if(!ev || !ev.key) return; if(ev.key === 'admin_notices_v1'){ renderNoticesModal(); } if(ev.key === 'admin_support_v1'){ /* optionally update UI if needed */ } }catch(e){} });
+          // menu settings toggle init
+          const menuSettingsLink = document.getElementById('openMenuSettings');
+          const menuSettings = document.getElementById('menuSettings');
+          const menuToastCheckbox = document.getElementById('menuToastCheckbox');
+          const noticesBadge = document.getElementById('noticesBadge');
+          if (menuSettingsLink && menuSettings && menuToastCheckbox) {
+            menuSettingsLink.addEventListener('click', function(e){ e.preventDefault(); menuSettings.style.display = menuSettings.style.display === 'none' ? 'block' : 'none'; });
+            function refreshMenuToastCheckbox(){ try{ const v = getNoticePref(); menuToastCheckbox.checked = !!v; }catch(e){} }
+            menuToastCheckbox.addEventListener('change', function(){ try{ setNoticePref(!!menuToastCheckbox.checked); alert('設定を保存しました'); }catch(e){} });
+            try{ refreshMenuToastCheckbox(); }catch(e){}
+          }
+
+          // update unread badge based on lastSeen vs current notices
+          function updateNoticesBadge(){ try{
+            const acc = getAccount(); const seen = new Set(getSeenIdsForCurrentUser()); const latest = loadNotices() || [];
+            let count = 0; const unread = [];
+            latest.forEach(n=>{ const id = n.id || (n.postedAt?String(n.postedAt):JSON.stringify(n)); if (!seen.has(id)) { count++; unread.push(n); } });
+            if (noticesBadge) {
+              if (count > 0) { noticesBadge.style.display = 'inline-block'; noticesBadge.textContent = count > 9 ? '9+' : String(count); }
+              else { noticesBadge.style.display = 'none'; }
+            }
+            // store unread list in a temporary place for dropdown
+            window.__unreadNoticesForMenu = unread;
+          }catch(e){}}
+          try{ updateNoticesBadge(); }catch(e){}
+          // wire notices dropdown
+          try{
+            const menuNoticesDropdown = document.getElementById('menuNoticesDropdown');
+            if (noticeLink && menuNoticesDropdown){
+              noticeLink.addEventListener('click', function(e){
+                try{ e.preventDefault(); const unread = window.__unreadNoticesForMenu || []; menuNoticesDropdown.innerHTML = ''; if(!unread || unread.length===0){ menuNoticesDropdown.innerHTML = '<div class="muted">未読のお知らせはありません</div>'; menuNoticesDropdown.style.display='none'; return; } unread.slice(0,10).forEach(n=>{ const row = document.createElement('div'); row.style.padding='8px'; row.style.borderBottom='1px solid #eee'; row.innerHTML = `<div style="font-weight:700">${escapeHtml(n.title||'お知らせ')}</div><div class="muted" style="font-size:0.9em;margin-top:4px;">${new Date(n.postedAt).toLocaleString()}</div><div style="margin-top:6px;">${escapeHtml(n.text).slice(0,120)}</div>`; const btnWrap = document.createElement('div'); btnWrap.style.marginTop='6px'; const openBtn = document.createElement('button'); openBtn.textContent='開く'; openBtn.className='small'; openBtn.addEventListener('click', function(){ try{ // mark this id as seen
+                                                      const acc = getAccount(); const key = lastSeenNoticesKey(acc && acc.username ? acc.username : 'guest'); const seen = getSeenIdsForCurrentUser(); const id = n.id || (n.postedAt?String(n.postedAt):JSON.stringify(n)); if (!seen.includes(id)) seen.push(id); localStorage.setItem(key, JSON.stringify(seen)); updateNoticesBadge(); openNotices(); menuNoticesDropdown.style.display='none'; }catch(e){} }); btnWrap.appendChild(openBtn); const markBtn = document.createElement('button'); markBtn.textContent='既読にする'; markBtn.className='small ghost'; markBtn.style.marginLeft='8px'; markBtn.addEventListener('click', function(){ try{ const acc = getAccount(); const key = lastSeenNoticesKey(acc && acc.username ? acc.username : 'guest'); const seen = getSeenIdsForCurrentUser(); const id = n.id || (n.postedAt?String(n.postedAt):JSON.stringify(n)); if (!seen.includes(id)) seen.push(id); localStorage.setItem(key, JSON.stringify(seen)); updateNoticesBadge(); row.style.display='none'; }catch(e){} }); btnWrap.appendChild(markBtn); row.appendChild(btnWrap); menuNoticesDropdown.appendChild(row); }); menuNoticesDropdown.style.display='block'; }catch(e){} }); }
+          }catch(e){}
+
+          // when admin updates notices in another tab (admin site), show a toast and update modal
+          window.addEventListener('storage', function(ev){
+            try{
+              if(!ev || !ev.key) return;
+              if(ev.key === 'admin_notices_v1'){
+                // refresh modal content
+                renderNoticesModal();
+                try{
+                  // only show toast; do NOT mark as seen here. mark seen only when user opens the modal.
+                  if (getNoticePref()) showNoticesToast();
+                }catch(e){}
+              }
+              if(ev.key === 'admin_support_v1'){ /* optionally update UI if needed */ }
+            }catch(e){}
+          });
+          // also update badge when any storage changes related to notices/lastSeen
+          window.addEventListener('storage', function(ev){ try{ if(!ev || !ev.key) return; if (ev.key === 'admin_notices_v1' || ev.key.indexOf('lastSeen_admin_notices_v1')===0) updateNoticesBadge(); }catch(e){} });
+          // on initial load, if there are unseen notices for this user, show toast and update badge
+          try{ (function(){
+            const acc = getAccount(); const key = lastSeenNoticesKey(acc && acc.username ? acc.username : 'guest');
+            const last = localStorage.getItem(key) || '';
+            const latest = localStorage.getItem('admin_notices_v1') || '[]';
+            if (latest && latest !== last && getNoticePref()) showNoticesToast();
+            try{ updateNoticesBadge(); }catch(e){}
+          })(); }catch(e){}
         });
+
+        // when account changes (login/logout), re-check unseen notices for the new user
+  document.addEventListener('accountChanged', function(){ try{ const acc = getAccount(); const key = lastSeenNoticesKey(acc && acc.username ? acc.username : 'guest'); const last = localStorage.getItem(key) || ''; const latest = localStorage.getItem('admin_notices_v1') || '[]'; if (latest && latest !== last && getNoticePref()) showNoticesToast(); try{ updateNoticesBadge(); }catch(e){} }catch(e){} });
+
+        // simple toast element for notices updates
+        function createNoticesToast(){
+          if (document.getElementById('noticesToast')) return;
+          const t = document.createElement('div');
+          t.id = 'noticesToast';
+          t.style.position = 'fixed';
+          t.style.right = '18px';
+          t.style.bottom = '18px';
+          t.style.background = '#323232';
+          t.style.color = '#fff';
+          t.style.padding = '12px 14px';
+          t.style.borderRadius = '8px';
+          t.style.boxShadow = '0 6px 18px rgba(0,0,0,0.25)';
+          t.style.zIndex = '12000';
+          t.style.display = 'none';
+          t.innerHTML = '<span id="noticesToastText" style="margin-right:12px;">お知らせが更新されました</span>';
+          const btn = document.createElement('button'); btn.textContent = '開く'; btn.style.marginLeft = '6px'; btn.style.padding='6px 8px'; btn.style.border='none'; btn.style.borderRadius='6px'; btn.style.background='#1976d2'; btn.style.color='#fff'; btn.onclick = function(){ openNotices(); hideNoticesToast(); };
+          const closeBtn = document.createElement('button'); closeBtn.textContent = '×'; closeBtn.style.marginLeft='8px'; closeBtn.style.padding='6px 8px'; closeBtn.style.border='none'; closeBtn.style.borderRadius='6px'; closeBtn.style.background='transparent'; closeBtn.style.color='#fff'; closeBtn.onclick = hideNoticesToast;
+          t.appendChild(btn); t.appendChild(closeBtn);
+          document.body.appendChild(t);
+        }
+    function showNoticesToast(){ try{ if (!getNoticePref()) return; createNoticesToast(); const t=document.getElementById('noticesToast'); if(!t) return; t.style.display='flex'; t.style.alignItems='center'; t.style.gap='8px'; // auto-hide after 6s
+      setTimeout(hideNoticesToast,6000);
+    }catch(e){}
+    }
+        function hideNoticesToast(){ try{ const t=document.getElementById('noticesToast'); if(!t) return; t.style.display='none'; }catch(e){} }
 
         // open/close support modal and submit
         window.openSupport = function(){ const modal = document.getElementById('supportModal'); if(!modal) return; const acc = getAccount(); const name = acc && acc.username ? acc.username : '匿名'; const sub = document.getElementById('supportSubject'); const msg = document.getElementById('supportMessage'); const note = document.getElementById('supportNotice'); if(sub) sub.value=''; if(msg) msg.value=''; if(note) note.textContent = '送信者: ' + name; modal.style.display='flex'; }
