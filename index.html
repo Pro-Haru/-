@@ -26,8 +26,10 @@
         --bg-gradient-end: #07101a;
         --card-bg: #0b1220;
         --primary: #4fc3f7;
+        /* Use a light text color for readability on dark backgrounds */
         --text: #e6eef8;
-        --muted: #9fb6c9;
+        /* Muted should also be a lighter desaturated color */
+        --muted: #9fb6c6;
         --surface: #071421;
       }
 
@@ -51,6 +53,37 @@
         border-color: rgba(255,255,255,0.08);
         color: var(--text);
       }
+      /* Improve legibility for text inputs and placeholders in dark mode */
+      .theme-dark input[type="text"],
+      .theme-dark input[type="password"],
+      .theme-dark input[type="number"],
+      .theme-dark textarea,
+      .theme-dark select {
+        color: #e6eef8 !important; /* light text for readability */
+      }
+      .theme-dark input::placeholder,
+      .theme-dark textarea::placeholder,
+      .theme-dark input[type="text"]::placeholder {
+        color: rgba(230,238,248,0.5) !important;
+        opacity: 1 !important;
+      }
+      /* vendor-prefixed placeholders */
+      .theme-dark input::-webkit-input-placeholder,
+      .theme-dark textarea::-webkit-input-placeholder { color: rgba(230,238,248,0.5) !important; }
+      .theme-dark input::-moz-placeholder,
+      .theme-dark textarea::-moz-placeholder { color: rgba(230,238,248,0.5) !important; }
+      .theme-dark input:-ms-input-placeholder,
+      .theme-dark textarea:-ms-input-placeholder { color: rgba(230,238,248,0.5) !important; }
+      .theme-dark input:-moz-placeholder,
+      .theme-dark textarea:-moz-placeholder { color: rgba(230,238,248,0.5) !important; }
+
+      /* Ensure prominently-displayed titles keep high contrast */
+      .theme-dark #printTitleDisplay,
+      .theme-dark #answerTitleDisplay,
+      .theme-dark #printTitleInArea,
+      .theme-dark #answerTitleInArea {
+        color: #7fe6ff !important;
+      }
       .theme-dark input[type="number"]:focus,
       .theme-dark select:focus,
       .theme-dark input[type="text"]:focus,
@@ -61,7 +94,7 @@
       .theme-dark button,
       .theme-dark .printButton {
         background: linear-gradient(90deg, #0b6b86 60%, #2bb7e8 100%);
-        color: #fff;
+        color: #ffffff;
         box-shadow: 0 4px 18px rgba(0,0,0,0.45);
       }
       .theme-dark button:hover,
@@ -94,6 +127,55 @@
   /* Override inline-colored legends and generic dark text to theme variables */
   .theme-dark legend, .theme-dark label { color: var(--primary) !important; }
   .theme-dark div[style*="color:#333"], .theme-dark div[style*="color:#111"] { color: var(--text) !important; }
+
+  /* Ensure form controls and fieldset use dark surfaces when theme-dark is active */
+  .theme-dark fieldset {
+    background: var(--card-bg) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    box-shadow: 0 1.5px 6px rgba(2,6,23,0.6) !important;
+    color: var(--text) !important;
+  }
+  .theme-dark input[type="number"],
+  .theme-dark input[type="text"],
+  .theme-dark textarea,
+  .theme-dark select {
+    background: rgba(255,255,255,0.03) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    color: var(--text) !important;
+  }
+  .theme-dark input[type="number"]:hover,
+  .theme-dark input[type="text"]:hover,
+  .theme-dark textarea:hover,
+  .theme-dark select:hover {
+    background: rgba(255,255,255,0.04) !important;
+  }
+  .theme-dark #previewArea,
+  .theme-dark #printArea,
+  .theme-dark #answerArea,
+  .theme-dark .preview-item,
+  .theme-dark .preview-item .question,
+  .theme-dark .preview-item .answer {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+    border-color: rgba(255,255,255,0.04) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
+    color: var(--text) !important;
+  }
+  .theme-dark .list-empty { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)) !important; border-color: rgba(255,255,255,0.04) !important; }
+  .theme-dark #menu-icon { background: var(--card-bg) !important; border-color: rgba(255,255,255,0.06) !important; box-shadow: 0 4px 16px rgba(2,6,23,0.6) !important; }
+  .theme-dark #menu-icon span { background: var(--text) !important; }
+  /* Ensure the detailed-answer / detailedAnswerArea uses dark surfaces in theme-dark */
+  .theme-dark #detailedAnswerArea {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+    border-color: rgba(255,255,255,0.04) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
+    color: var(--text) !important;
+  }
+  .theme-dark .detailed-answer {
+    background: rgba(255,255,255,0.01) !important;
+    border-color: rgba(255,255,255,0.03) !important;
+    color: var(--text) !important;
+  }
+  .theme-dark .detailed-answer .detailed-steps { color: var(--muted) !important; }
       /* ページ全体の背景・フォント設定 */
       body {
         font-family: "UDDigiKyokashoN";
@@ -146,7 +228,7 @@
         border-radius: 10px;
         padding: 14px 18px 12px 18px;
         margin-bottom: 18px;
-        background: #fafdff;
+        background: #ffffff;
         box-shadow: 0 1.5px 6px rgba(60, 80, 120, 0.04);
       }
 
@@ -184,7 +266,7 @@
         outline: none;
         border-color: #1976d2;
         box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
-        background: #ffffff;
+        background: #311919;
       }
 
       /* 最新風セレクト（カスタム矢印＋角丸＋フォーカスリング） */
@@ -706,7 +788,7 @@
     -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll("select").forEach(function(sel) {
+          const rationalType = document.getElementById("rationalType");
           sel.addEventListener("focus", function() {
             sel.classList.add("open");
           });
@@ -718,7 +800,40 @@
             sel.blur();
           });
         });
-      });
+        // operandCount が 1 かつ累乗が選択され、かつ小数モードのときのみ
+        // 小数用の演算子ブロック（#digitsOperatorDecimalGroup）を非表示にする
+        document.addEventListener('DOMContentLoaded', function(){
+          const operand = document.getElementById('operandCount');
+          const decB = document.getElementById('digitCountB_decimal');
+          const decBLabel = document.querySelector('label[for="digitCountB_decimal"]');
+          const rationalType = document.getElementById('rationalType');
+          const powerCheckbox = document.getElementById('power');
+          // newly added grouping element around the decimal operator selectors
+          const decGroup = document.getElementById('digitsOperatorDecimalGroup');
+
+          function updateDecBVisibility(){
+            if (!operand) return;
+            const isSingle = String(operand.value) === '1';
+            const isDecimal = rationalType && rationalType.value === 'decimal';
+            const isPower = powerCheckbox && powerCheckbox.checked;
+            const hide = isSingle && isDecimal && isPower;
+            // Prefer hiding the whole group if present
+            if (decGroup) {
+              decGroup.style.display = hide ? 'none' : '';
+            } else {
+              // fallback: hide individual label/select if group not present
+              if (decB) decB.style.display = hide ? 'none' : '';
+              if (decBLabel) decBLabel.style.display = hide ? 'none' : '';
+            }
+          }
+
+          // listen to relevant controls so visibility updates immediately
+          if (operand) operand.addEventListener('change', updateDecBVisibility);
+          if (rationalType) rationalType.addEventListener('change', updateDecBVisibility);
+          if (powerCheckbox) powerCheckbox.addEventListener('change', updateDecBVisibility);
+          // initial
+          updateDecBVisibility();
+        });
     </script>
     <script>
       // Theme toggle: persist preference and apply class to <html>
@@ -772,6 +887,13 @@
             if (btn.disabled) btn.setAttribute('aria-disabled', 'true');
             else btn.removeAttribute('aria-disabled');
           });
+          // Enable/disable the clear button next to generate
+          const clearBtn = document.getElementById('clearQuestionsBtn');
+          if (clearBtn) {
+            clearBtn.disabled = !hasQuestions;
+            if (clearBtn.disabled) clearBtn.setAttribute('aria-disabled', 'true');
+            else clearBtn.removeAttribute('aria-disabled');
+          }
         } catch (e) {
           console.error('updatePrintButtons error', e);
         }
@@ -976,21 +1098,26 @@
   </style>
   <!-- 途中式エリアの枠表示 -->
   <style>
-    /* 画面上で途中式エリアを黒枠で囲む */
+    /* 途中式エリアを #printArea / #answerArea と揃える（空の状態でも見た目が統一される） */
     #detailedAnswerArea {
-      border: 2px solid #000;
+      border: 1.5px solid #b0b0b0;
       border-radius: 10px;
-      background: #fff;
-      padding: 10px;
+      background: var(--surface);
+      box-shadow: 0 1.5px 6px rgba(60, 80, 120, 0.04);
+      margin-bottom: 18px;
+      /* match visual height of other empty areas: smaller vertical padding */
+      padding: 12px 10px 12px 10px;
       box-sizing: border-box;
-      margin-bottom: 12px;
+      min-height: 40px; /* reduced to better match others */
+      line-height: 1.2;
     }
-    /* 印刷時 / PDF一時適用時に優先される調整 */
+    /* 印刷時 / PDF一時適用時に優先される調整（既存の print 用スタイルを維持） */
     #detailedAnswerArea.printing-area {
       border: 2px solid #000 !important;
       border-radius: 10px !important;
       background: #fff !important;
       padding: 6px !important;
+      box-shadow: none !important;
     }
   </style>
     <!-- 問題生成・表示・回答生成のメインロジック -->
@@ -1039,6 +1166,15 @@
   // - それ以外は整数扱いのランダム生成になります。
         const rationalType = document.getElementById("rationalType").value;
 
+        // 安全な数値パース関数: '(-3)', '-3.2', '3.2' や数値を正しく数値化する
+        function toNumber(v) {
+          if (typeof v === 'number') return v;
+          if (typeof v !== 'string') return Number(v);
+          // '(-1.23)' のような形式を扱うため数字部分を抽出
+          const m = v.match(/-?\d+(?:\.\d+)?/);
+          return m ? parseFloat(m[0]) : NaN;
+        }
+
         // 選択された計算の種類を取得
         // 選択された演算種類（加減乗除）を取得
         const operations = [];
@@ -1060,18 +1196,17 @@
         }
 
         // A, Bの桁数を取得
-        // 被演算子・演算子の桁数を取得
-        const digitCountA = parseInt(
-          document.getElementById("digitCountA").value
-        );
-        const digitCountB = parseInt(
-          document.getElementById("digitCountB").value
-        );
-        // 桁数から最小・最大値を計算
-        const maxA = Math.pow(10, digitCountA) - 1;
-        const minA = Math.pow(10, digitCountA - 1);
-        const maxB = Math.pow(10, digitCountB) - 1;
-        const minB = Math.pow(10, digitCountB - 1);
+        // 小数選択時は整数部の桁数選択が別要素にあるため、それを優先して使う
+        function readIntSelect(id, fallback) {
+          try { const el = document.getElementById(id); return el ? parseInt(el.value) : fallback; } catch(e) { return fallback; }
+        }
+        const digitCountA = (rationalType === 'decimal') ? readIntSelect('digitCountA_decimal', 1) : readIntSelect('digitCountA', 1);
+        const digitCountB = (rationalType === 'decimal') ? readIntSelect('digitCountB_decimal', 1) : readIntSelect('digitCountB', 1);
+        // 桁数から最小・最大値を計算（digitCount が 1 の場合 min は 1）
+        const maxA = Math.pow(10, Math.max(1, digitCountA)) - 1;
+        const minA = Math.pow(10, Math.max(1, digitCountA) - 1);
+        const maxB = Math.pow(10, Math.max(1, digitCountB)) - 1;
+        const minB = Math.pow(10, Math.max(1, digitCountB) - 1);
 
         // 分数・小数の判定方法をrationalTypeの値で分岐するよう修正
         // 分数・小数チェックボックス参照部分を削除
@@ -1121,12 +1256,33 @@
         // 項数（2 or 3）取得
         const operandCount = parseInt(document.getElementById('operandCount').value || '2');
 
+        // exponent 設定ヘルパー: 累乗の桁数選択（digitCountB）に基づいて指数の上限を決める
+        function computeExpBounds() {
+          // 指数は常に1桁に固定する（1〜9）。
+          // UI の桁数選択から累乗桁数を取り除くため、ここでは固定値を返す。
+          return { min: 1, max: 9 };
+        }
+        function clampExp(v) {
+          const bounds = computeExpBounds();
+          const n = Math.round(Number(v) || 0);
+          return Math.max(0, Math.min(bounds.max, n));
+        }
+
         // 問題数分だけ繰り返し生成
         for (let i = 0; i < count; i++) {
           let num1, num2;
           let num3 = null;
           // single operand mode: generate a small exponent for a^n problems
-          const singleExp = operandCount === 1 ? (Math.floor(Math.random() * 2) + 2) : null; // 2 or 3
+          let singleExp = null;
+          if (operandCount === 1) {
+            const bounds = computeExpBounds();
+            // pick an exponent that has the selected number of digits
+            // e.g., digitCountB=1 -> 1..9, digitCountB=2 -> 10..99
+            const minE = Math.max(1, bounds.min);
+            const maxE = bounds.max;
+            // random integer between minE and maxE inclusive
+            singleExp = Math.floor(Math.random() * (maxE - minE + 1)) + minE;
+          }
           // 有理数の種類ごとに数値を生成
           if (rationalType === "positive") {
             // 正数
@@ -1267,11 +1423,11 @@
             else if (operation === "divide") fracOp = "÷";
             else if (operation === "power") fracOp = "^";
             // 問題文（分数式）を生成（2項 or 3項）
-      if (fracOp === '^') {
+  if (fracOp === '^') {
         // 分数の累乗の適用先をフォームから取得（存在しない場合は whole をデフォルト）
         const powModeEl = document.getElementById('fractionPowerMode');
         const powMode = powModeEl ? powModeEl.value : 'whole';
-        const exp = operandCount === 1 ? singleExp : (operandCount === 2 ? numerator2 : (numerator3 || numerator2));
+  const exp = operandCount === 1 ? singleExp : (operandCount === 2 ? numerator2 : (numerator3 || numerator2));
         if (powMode === 'whole') {
           // (a/b)^n - show parentheses around the fraction
           questionText = `
@@ -1372,8 +1528,8 @@
             } else if (fracOp === "^") {
               // exponent: use numerator2 as exponent if operandCount===2, else numerator3
               let exp = operandCount === 2 ? numerator2 : numerator3 || 2;
-              // keep exponent small to avoid huge numbers
-              exp = Math.max(0, Math.min(3, parseInt(exp.toString().slice(-1))));
+              // clamp exponent according to digitCountB selection
+              exp = clampExp(exp);
               // Determine mode: whole / numerator / denominator
               const powModeEl = document.getElementById('fractionPowerMode');
               const powMode = powModeEl ? powModeEl.value : 'whole';
@@ -1433,22 +1589,22 @@
             if (operandCount === 2) {
               switch (decOp) {
                 case "+":
-                  decAns = (parseFloat(num1) + parseFloat(num2)).toFixed(2);
+                  decAns = (toNumber(num1) + toNumber(num2)).toFixed(2);
                   break;
                 case "-":
-                  decAns = (parseFloat(num1) - parseFloat(num2)).toFixed(2);
+                  decAns = (toNumber(num1) - toNumber(num2)).toFixed(2);
                   break;
                 case "×":
-                  decAns = (parseFloat(num1) * parseFloat(num2)).toFixed(2);
+                  decAns = (toNumber(num1) * toNumber(num2)).toFixed(2);
                   break;
                 case "÷":
-                  decAns = (parseFloat(num1) / parseFloat(num2)).toFixed(2);
+                  decAns = (toNumber(num1) / toNumber(num2)).toFixed(2);
                   break;
                 case "^":
                   // small exponent
                   try {
-                    const e = operandCount === 1 ? singleExp : Math.max(0, Math.min(3, Math.round(parseFloat(num2))));
-                    decAns = Math.pow(parseFloat(num1), e).toFixed(2);
+                    const e = operandCount === 1 ? singleExp : clampExp(Math.round(toNumber(num2)));
+                    decAns = Math.pow(toNumber(num1), e).toFixed(2);
                   } catch (e) { decAns = 'エラー'; }
                   break;
               }
@@ -1457,35 +1613,35 @@
               let intermediate = 0;
               switch (decOp) {
                 case "+":
-                  intermediate = parseFloat(num1) + parseFloat(num2);
+                  intermediate = toNumber(num1) + toNumber(num2);
                   break;
                 case "-":
-                  intermediate = parseFloat(num1) - parseFloat(num2);
+                  intermediate = toNumber(num1) - toNumber(num2);
                   break;
                 case "×":
-                  intermediate = parseFloat(num1) * parseFloat(num2);
+                  intermediate = toNumber(num1) * toNumber(num2);
                   break;
                 case "÷":
-                  intermediate = parseFloat(num1) / parseFloat(num2);
+                  intermediate = toNumber(num1) / toNumber(num2);
                   break;
               }
               // 第3項は同じ演算子を使用（シンプルな実装）
               switch (decOp) {
                 case "+":
-                  decAns = (intermediate + parseFloat(num3)).toFixed(2);
+                  decAns = (intermediate + toNumber(num3)).toFixed(2);
                   break;
                 case "-":
-                  decAns = (intermediate - parseFloat(num3)).toFixed(2);
+                  decAns = (intermediate - toNumber(num3)).toFixed(2);
                   break;
                 case "×":
-                  decAns = (intermediate * parseFloat(num3)).toFixed(2);
+                  decAns = (intermediate * toNumber(num3)).toFixed(2);
                   break;
                 case "÷":
-                  decAns = (intermediate / parseFloat(num3)).toFixed(2);
+                  decAns = (intermediate / toNumber(num3)).toFixed(2);
                   break;
                 case "^":
                   try {
-                    const e = Math.max(0, Math.min(3, Math.round(parseFloat(num3))));
+                    const e = clampExp(Math.round(toNumber(num3)));
                     decAns = Math.pow(intermediate, e).toFixed(2);
                   } catch (e) { decAns = 'エラー'; }
                   break;
@@ -1545,7 +1701,7 @@
               if (operation === 'power') {
                 const e = singleExp;
                 questionText = `${n1}<sup style="vertical-align:super; font-size:0.85em;">${e}</sup> = `;
-                try { answerText = Math.pow(parseFloat(n1), e).toString(); } catch(e) { answerText = 'エラー'; }
+                try { answerText = Math.pow(toNumber(n1), e).toString(); } catch(e) { answerText = 'エラー'; }
               } else {
                 // other operations don't make sense for 1-operand mode
                 questionText = `${n1} = `;
@@ -1554,21 +1710,21 @@
             } else if (operandCount === 2) {
               switch (operation) {
                 case "add":
-                  answerText = (parseFloat(num1) + parseFloat(num2)).toString();
+                  answerText = (toNumber(num1) + toNumber(num2)).toString();
                   break;
                 case "subtract":
-                  answerText = (parseFloat(num1) - parseFloat(num2)).toString();
+                  answerText = (toNumber(num1) - toNumber(num2)).toString();
                   break;
                 case "multiply":
-                  answerText = (parseFloat(num1) * parseFloat(num2)).toString();
+                  answerText = (toNumber(num1) * toNumber(num2)).toString();
                   break;
                 case "divide":
-                  answerText = (parseFloat(num1) / parseFloat(num2)).toFixed(2);
+                  answerText = (toNumber(num1) / toNumber(num2)).toFixed(2);
                   break;
                 case "power":
                   try {
-                    const e = Math.max(0, Math.min(3, Math.round(parseFloat(num2))));
-                    answerText = Math.pow(parseFloat(num1), e).toString();
+                    const e = operandCount === 1 ? singleExp : clampExp(Math.round(toNumber(num2)));
+                    answerText = Math.pow(toNumber(num1), e).toString();
                   } catch (e) { answerText = 'エラー'; }
                   break;
               }
@@ -1577,37 +1733,37 @@
               let intermediate = 0;
               switch (operation) {
                 case "add":
-                  intermediate = parseFloat(num1) + parseFloat(num2);
+                  intermediate = toNumber(num1) + toNumber(num2);
                   break;
                 case "subtract":
-                  intermediate = parseFloat(num1) - parseFloat(num2);
+                  intermediate = toNumber(num1) - toNumber(num2);
                   break;
                 case "multiply":
-                  intermediate = parseFloat(num1) * parseFloat(num2);
+                  intermediate = toNumber(num1) * toNumber(num2);
                   break;
                 case "divide":
-                  intermediate = parseFloat(num1) / parseFloat(num2);
+                  intermediate = toNumber(num1) / toNumber(num2);
                   break;
                 case "power":
-                  intermediate = Math.pow(parseFloat(num1), Math.max(0, Math.min(3, Math.round(parseFloat(num2)))));
+                  intermediate = Math.pow(toNumber(num1), clampExp(Math.round(toNumber(num2))));
                   break;
               }
               switch (operation) {
                 case "add":
-                  answerText = (intermediate + parseFloat(num3)).toString();
+                  answerText = (intermediate + toNumber(num3)).toString();
                   break;
                 case "subtract":
-                  answerText = (intermediate - parseFloat(num3)).toString();
+                  answerText = (intermediate - toNumber(num3)).toString();
                   break;
                 case "multiply":
-                  answerText = (intermediate * parseFloat(num3)).toString();
+                  answerText = (intermediate * toNumber(num3)).toString();
                   break;
                 case "divide":
-                  answerText = (intermediate / parseFloat(num3)).toFixed(2);
+                  answerText = (intermediate / toNumber(num3)).toFixed(2);
                   break;
                 case "power":
                   try {
-                    const e = Math.max(0, Math.min(3, Math.round(parseFloat(num3))));
+                    const e = clampExp(Math.round(toNumber(num3)));
                     answerText = Math.pow(intermediate, e).toString();
                   } catch (e) { answerText = 'エラー'; }
                   break;
@@ -1731,7 +1887,7 @@
                   } else if (fracOp === '^') {
                     // 累乗: (a/b)^e => a^e / b^e
                     const exp = operandCount === 2 ? numerator2 : (numerator3 || numerator2);
-                    const e = Math.max(0, Math.min(3, parseInt(exp.toString().slice(-1))));
+                    const e = clampExp(exp);
                     steps.push(`累乗: ( ${n1}/${d1} )^${e} = ${Math.pow(n1, e)}/${Math.pow(d1, e)}`);
                     const powNum = Math.pow(n1, e);
                     const powDen = Math.pow(d1, e);
@@ -1746,8 +1902,8 @@
                   const opSymbol = (operation === 'add' && '+') || (operation === 'subtract' && '-') || (operation === 'multiply' && '×') || (operation === 'divide' && '÷') || (operation === 'power' && '^') || '';
                   if (operandCount === 2) {
                     steps.push(`${num1} ${opSymbol} ${num2} を計算します。`);
-                    if (opSymbol === '^') {
-                      const e = Math.max(0, Math.min(3, Math.round(parseVal(num2))));
+                      if (opSymbol === '^') {
+                      const e = clampExp(Math.round(parseVal(num2)));
                       steps.push(`${num1}^${e} = ${Math.pow(parseVal(num1), e).toFixed(2)}`);
                     } else {
                       const aVal = parseVal(num1);
@@ -1785,9 +1941,9 @@
                 } else {
                   // 正数・負数・正負数（整数系）
                   if (operandCount === 2) {
-                    if (operation === 'power') {
-                      const e = Math.max(0, Math.min(3, Math.round(parseFloat(num2))));
-                      steps.push(`${num1} を ${e} 乗します。${num1}^${e} = ${Math.pow(parseFloat(num1), e)}`);
+                      if (operation === 'power') {
+                      const e = clampExp(Math.round(toNumber(num2)));
+                      steps.push(`${num1} を ${e} 乗します。${num1}^${e} = ${Math.pow(toNumber(num1), e)}`);
                     } else if (operation === 'divide') {
                       const a = parseFloat(num1), b = parseFloat(num2);
                       const q = (a / b).toFixed(2);
@@ -2825,6 +2981,45 @@
                 }
               });
             }
+            // operandCount によって桁数表示を切り替える（1項時は digitCountB を非表示にする）
+            (function(){
+              const operandSelect = document.getElementById('operandCount');
+              const labelA = document.querySelector('label[for="digitCountA"]');
+              const labelB = document.querySelector('label[for="digitCountB"]');
+              const selectA = document.getElementById('digitCountA');
+              const selectAdec = document.getElementById('digitCountA_decimal');
+              const selectB = document.getElementById('digitCountB');
+              const fractionChkLocal = document.getElementById('fraction');
+
+              function updateDigitVisibility() {
+                if (!operandSelect) return;
+                const isSingle = String(operandSelect.value) === '1';
+                const fractionChecked = !!(fractionChkLocal && fractionChkLocal.checked);
+                // 被演算子ラベルは1項時に底を示す文言にしておく
+                if (labelA) labelA.textContent = isSingle ? '被演算子（底）の桁数' : '被演算子：';
+                // 1項時は digitCountB を非表示にする（累乗桁数をUIから削除）
+                if (labelB) labelB.style.display = isSingle ? 'none' : '';
+                if (selectB) selectB.style.display = isSingle ? 'none' : '';
+
+                // 被演算子 (A) の select が意図せず無効化されないよう明示的に有効化。
+                // ただし分数モードでは通常の桁数選択を隠すため無効化/非表示とする。
+                if (selectA) {
+                  selectA.disabled = fractionChecked;
+                  selectA.style.display = fractionChecked ? 'none' : '';
+                }
+                if (selectAdec) {
+                  selectAdec.disabled = fractionChecked;
+                  selectAdec.style.display = fractionChecked ? 'none' : '';
+                }
+              }
+              if (operandSelect) {
+                operandSelect.addEventListener('change', updateDigitVisibility);
+                // 分数チェックが変わった際にも反映する
+                if (fractionChkLocal) fractionChkLocal.addEventListener('change', updateDigitVisibility);
+                // 初期呼び出し
+                updateDigitVisibility();
+              }
+            })();
           });
         </script>
         <!-- 分数の桁数選択エリア（分数時のみ表示） -->
@@ -2900,7 +3095,6 @@
                 <option value="3">3桁</option>
                 <option value="4">4桁</option>
               </select>
-              ＋
               <label for="digitCountB">演算子：</label>
               <select id="digitCountB" name="digitCountB">
                 <option value="1">1桁</option>
@@ -2910,7 +3104,6 @@
               </select>
             </div>
             <div style="margin-top:8px; display:flex;align-items:center;gap:8px;">
-              ＋
               <label for="digitCountC">演算子2（3項時のみ）：</label>
               <select id="digitCountC" name="digitCountC">
                 <option value="1">1桁</option>
@@ -2919,9 +3112,7 @@
                 <option value="4">4桁</option>
               </select>
             </div>
-            <div style="margin-top:6px;">
-              両方（3項時は3つ）の桁数を選択して下さい
-            </div>
+            <!-- explanatory text removed per user request -->
           </div>
           <!-- 小数選択時のみ表示する桁数＋小数点以下の行分けエリア -->
           <div id="digitsRowDecimal" style="display: none">
@@ -2943,7 +3134,7 @@
                 <option value="4">4桁</option>
               </select>
             </div>
-            <div>
+            <div id="digitsOperatorDecimalGroup">
               <span style="font-weight: 600; color: #1976d2">演算子：</span>
               <label for="digitCountB_decimal">桁数</label>
               <select id="digitCountB_decimal" name="digitCountB_decimal">
@@ -2960,6 +3151,7 @@
                 <option value="3">3桁</option>
                 <option value="4">4桁</option>
               </select>
+              
               <span style="margin-left: 18px"></span>
               <label for="digitCountC_decimal">桁数（3項目）</label>
               <select id="digitCountC_decimal" name="digitCountC_decimal">
@@ -3038,7 +3230,8 @@
 
   <!-- プレビューと問題表示の間の問題生成ボタン -->
   <div style="margin:10px 0 18px 0;text-align:left;">
-    <button type="button" onclick="document.getElementById('mainForm').requestSubmit ? document.getElementById('mainForm').requestSubmit() : document.getElementById('mainForm').submit();">問題を生成</button>
+    <button type="button" id="generateBtn" onclick="document.getElementById('mainForm').requestSubmit ? document.getElementById('mainForm').requestSubmit() : document.getElementById('mainForm').submit();">問題を生成</button>
+  <button type="button" id="clearQuestionsBtn" class="printButton" onclick="clearQuestions()" disabled style="margin-left:10px;" title="生成された問題があるときのみ有効">問題を削除</button>
   </div>
 
       <h2>問題</h2>
@@ -3084,6 +3277,26 @@
   if (!document.querySelector('#answerArea .answer')) { alert('回答が生成されていません。'); return; }
   printTargetArea("answerArea");
       }
+      
+          // 問題・回答・途中式を完全に消去するユーティリティ
+          function clearQuestions() {
+            try {
+              const printArea = document.getElementById('printArea');
+              const answerArea = document.getElementById('answerArea');
+              const detailed = document.getElementById('detailedAnswerArea');
+              if (printArea) printArea.innerHTML = '';
+              if (answerArea) answerArea.innerHTML = '';
+              if (detailed) detailed.innerHTML = '';
+              // タイトル表示もクリア
+              try { document.getElementById('printTitleDisplay').textContent = ''; } catch(e){}
+              try { document.getElementById('answerTitleDisplay').textContent = ''; } catch(e){}
+              // 非表示だった印刷ボタンなどを更新
+              try { updatePrintButtons(); } catch(e){}
+            } catch (e) {
+              console.error('clearQuestions error', e);
+              alert('問題の削除に失敗しました。コンソールを確認してください。');
+            }
+          }
   // PDF保存機能はすべて廃止されました（saveQuestionsPDF / saveAnswersPDF / saveAreaToPDF の削除）
       /**
        * 指定したエリアのみを印刷するユーティリティ
@@ -3263,6 +3476,21 @@
       #myPageModal .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
       #myPageModal label { display:block; font-size:0.95em; margin-bottom:6px; }
       #myPageModal input[type="text"], #myPageModal input[type="password"] { width:100%; padding:8px; border-radius:6px; border:1px solid #d0d7de; }
+      /* Dark theme overrides for MyPage modal inputs */
+      .theme-dark #myPageModal .card { background: var(--card-bg) !important; color: var(--text) !important; }
+      .theme-dark #myPageModal input[type="text"],
+      .theme-dark #myPageModal input[type="password"],
+      .theme-dark #myPageModal textarea,
+      .theme-dark #myPageModal select {
+        background: rgba(255,255,255,0.03) !important;
+        border-color: rgba(255,255,255,0.06) !important;
+        color: var(--text) !important;
+      }
+      .theme-dark #myPageModal input::placeholder,
+      .theme-dark #myPageModal textarea::placeholder {
+        color: rgba(230,238,248,0.5) !important;
+        opacity: 1 !important;
+      }
       #myPageModal button { margin-top:6px; }
       #menuAccountStatus.empty { color: #999; }
     </style>
@@ -3301,9 +3529,16 @@
           </div>
           <div style="margin-top:12px;">
             <div style="margin-bottom:8px;"><label for="supportSubject">件名（任意）</label><input id="supportSubject" type="text" placeholder="件名を入力" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d0d7de;"/></div>
-            <div style="margin-bottom:8px;"><label for="supportMessage">メッセージ</label><textarea id="supportMessage" rows="6" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d0d7de;" placeholder="使い方の質問や不具合の報告、要望などを書いて送信してください。"></textarea></div>
+            <div style="margin-bottom:8px;"><label for="supportMessage">メッセージ</label><textarea id="supportMessage" rows="6" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d0d7de;resize:none;overflow:auto;" placeholder="使い方の質問や不具合の報告、要望などを書いて送信してください。"></textarea></div>
             <div style="display:flex;gap:8px;justify-content:flex-end;"><button type="button" onclick="submitSupport()">送信</button><button type="button" class="ghost" onclick="closeSupport()">閉じる</button></div>
             <div id="supportNotice" style="margin-top:8px;font-size:0.9em;color:var(--muted);"></div>
+            <div id="supportHistoryWrapper" style="margin-top:12px;border-top:1px dashed rgba(0,0,0,0.06);padding-top:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div style="font-weight:700;">あなたの送信履歴</div>
+                <button type="button" id="toggleSupportHistory" class="small ghost" style="font-size:0.85em;padding:6px 8px;">表示</button>
+              </div>
+              <div id="supportHistory" style="max-height:180px;overflow:auto;font-size:0.95em;display:none;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -3744,12 +3979,51 @@
         function hideNoticesToast(){ try{ const t=document.getElementById('noticesToast'); if(!t) return; t.style.display='none'; }catch(e){} }
 
         // open/close support modal and submit
-        window.openSupport = function(){ const modal = document.getElementById('supportModal'); if(!modal) return; const acc = getAccount(); const name = acc && acc.username ? acc.username : '匿名'; const sub = document.getElementById('supportSubject'); const msg = document.getElementById('supportMessage'); const note = document.getElementById('supportNotice'); if(sub) sub.value=''; if(msg) msg.value=''; if(note) note.textContent = '送信者: ' + name; modal.style.display='flex'; }
+        // optionalUsername: if provided, show that account's history (used from My Page)
+        window.openSupport = function(optionalUsername){ const modal = document.getElementById('supportModal'); if(!modal) return; const acc = getAccount(); const name = (typeof optionalUsername !== 'undefined' && optionalUsername !== null) ? optionalUsername : (acc && acc.username ? acc.username : '匿名'); const sub = document.getElementById('supportSubject'); const msg = document.getElementById('supportMessage'); const note = document.getElementById('supportNotice'); if(sub) sub.value=''; if(msg) msg.value=''; if(note) note.textContent = '送信者: ' + name; // initialize history collapsed
+          const hist = document.getElementById('supportHistory'); const btn = document.getElementById('toggleSupportHistory'); if(hist){ hist.style.display = 'none'; } if(btn){ btn.textContent = '表示'; btn.onclick = function(){ toggleSupportHistory(name); }; }
+          // render history but keep it hidden until user opens
+          try{ renderUserSupportHistory(name); }catch(e){}
+          modal.style.display='flex'; }
+
+        function toggleSupportHistory(user){ const el = document.getElementById('supportHistory'); const btn = document.getElementById('toggleSupportHistory'); if(!el || !btn) return; if(el.style.display === 'none' || el.style.display === ''){ // show
+            try{ renderUserSupportHistory(user); }catch(e){}
+            el.style.display = 'block'; btn.textContent = '非表示';
+          } else { el.style.display = 'none'; btn.textContent = '表示'; }
+        }
         window.closeSupport = function(){ const modal = document.getElementById('supportModal'); if(!modal) return; modal.style.display='none'; }
 
         window.submitSupport = function(){ try{ const subj = (document.getElementById('supportSubject')||{}).value || ''; const message = (document.getElementById('supportMessage')||{}).value || ''; const acc = getAccount(); const user = acc && acc.username ? acc.username : null; if(!message || !message.trim()){ document.getElementById('supportNotice').textContent='メッセージを入力してください'; return; } const key = 'admin_support_v1'; let arr = []; try{ arr = JSON.parse(localStorage.getItem(key) || '[]'); }catch(e){ arr = []; } arr.push({ user: user, subject: subj, message: message, at: Date.now() }); try{ localStorage.setItem(key, JSON.stringify(arr)); }catch(e){} document.getElementById('supportNotice').textContent='送信しました。管理者が確認します。'; // close after small delay
+          try{ renderUserSupportHistory(user); }catch(e){}
           setTimeout(()=>{ try{ closeSupport(); }catch(e){} }, 900);
         }catch(e){ console.error('submitSupport error', e); alert('送信に失敗しました'); } }
+
+        // get support list from storage
+        function getSupportList(){ try{ return JSON.parse(localStorage.getItem('admin_support_v1') || '[]') || []; }catch(e){ return []; } }
+
+        // render messages sent by the provided user (user may be null for 匿名)
+        function renderUserSupportHistory(user){
+          try{
+            const list = getSupportList();
+            const el = document.getElementById('supportHistory'); if(!el) return;
+            el.innerHTML = '';
+            // filter messages by user (both null/undefined treated as anonymous)
+            const filtered = list.filter(m => {
+              const u = (m && typeof m.user !== 'undefined') ? m.user : null;
+              return (user === null && (u === null || u === undefined)) || (user !== null && u === user);
+            });
+            if (!filtered || filtered.length === 0) { el.innerHTML = '<div class="muted">履歴はありません。</div>'; return; }
+            // show newest first
+            filtered.reverse().forEach(m => {
+              const row = document.createElement('div'); row.style.padding = '8px 0'; row.style.borderBottom = '1px solid rgba(0,0,0,0.04)';
+              const subj = document.createElement('div'); subj.style.fontWeight = '600'; subj.style.marginBottom = '4px'; subj.textContent = m.subject ? m.subject : '(件名なし)';
+              const dt = document.createElement('div'); dt.style.fontSize = '0.85em'; dt.className = 'muted'; dt.textContent = new Date(m.at || Date.now()).toLocaleString();
+              const msg = document.createElement('div'); msg.style.marginTop = '6px'; msg.textContent = m.message || '';
+              row.appendChild(subj); row.appendChild(dt); row.appendChild(msg);
+              el.appendChild(row);
+            });
+          }catch(e){ console.error('renderUserSupportHistory error', e); }
+        }
 
         // hook menu link
         document.addEventListener('DOMContentLoaded', function(){
